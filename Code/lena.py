@@ -37,7 +37,7 @@ X = np.asfortranarray(X,dtype=float)
 
 
 # Spams parameters
-param = {'mode':5, 'K':300, 'lambda1':0.015, 'numThreads':4, 'batchsize':100, 'iter':1000}
+param = {'mode':5, 'K':400, 'lambda1':0.0015, 'numThreads':4, 'batchsize':100, 'iter':3000}
 
 #===========First Experiment================
 

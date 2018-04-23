@@ -18,13 +18,13 @@ def Convergence(Matrix_before,Matrix_after):
     sys.stdout.write("\rOpti D " +str(np.sum(abs(Matrix_before - Matrix_after))))
     sys.stdout.flush()
     #print("Diff:",np.sum(bs(Matrix_before - Matrix_after)))
-    return np.sum(abs(Matrix_before - Matrix_after)) > 0.1
+    return np.sum(abs(Matrix_before - Matrix_after)) > 1
 
 def Convergence2(Matrix_before,Matrix_after):
     sys.stdout.write("\rOpti H " + str(np.sum(abs(Matrix_before - Matrix_after))))
     sys.stdout.flush() 
     #print("Diff2:",np.sum(abs(Matrix_before - Matrix_after)))
-    return np.sum(abs(Matrix_before - Matrix_after)) > 0.1
+    return np.sum(abs(Matrix_before - Matrix_after)) > 1
 
 
 # Function which help to avoid the non-division by 0 in the h's gradient descent
@@ -40,24 +40,26 @@ def shrink(h,coef):
     return h
 
 # Function for h gradient descent
-def ISTA(h,D,x,k,alpha = 0.002,lambda_coef = 0.2):
+def ISTA(h,D,x,k,alpha = 0.05,lambda_coef = 0.2):
     
     lambda_coef = 1.2/math.sqrt(len(x)) # Cf Online Dictionary learning for Sparse Coding Doc
-    not_converged = True
+    not_converged = True 
     # While h^(t) has not converged
     while(not_converged):
         h_before = np.array(h)
-
-        # h^(t) <= h^(t) - alpha D' (D h^(t) -x^(t))
-        h = h - alpha/(len(D)) * (np.transpose(D).dot(D.dot(h) - x))
-
+	
         for i in range(k):
-           # h^(t) <= shrink (h^(t), alpha lamdba)
+
+            #h^(t) <= h^(t) - alpha D' (D h^(t) -x^(t))
+
+            h[i] = h[i] - alpha * (np.transpose(D[:,i]).dot(D.dot(h) -x))
+         
+            # h^(t) <= shrink (h^(t), alpha lamdba)
             h[i] = shrink(h[i],alpha * lambda_coef)
 
         #Check if convergence
         not_converged = Convergence2(h_before,h)
-        #print("COST",compute_cost(x,D,h))
+
     # return h^(t)
     return h
 
@@ -81,7 +83,7 @@ def Dictionary_gradient_descent(D,x,k,alpha = 0.5):
     while(not_converged):
             D_before = np.aray(D)
             # Compute D = D - alpha  * 1/T Sum(x - Dh * transpose(h))
-            D = D - alpha * (1/T) * sum( (x -Dh)* np.transpose(h))
+            D = D - alpha  * sum( (x -Dh)* np.transpose(h))
             # Normalise
             for j in range(k):
                D[:,j] = (D[:,j] / np.norm(D[:,j]))
@@ -91,16 +93,21 @@ def Dictionary_gradient_descent(D,x,k,alpha = 0.5):
     return D
 # Compute current cost 
 def compute_cost(x,D,h,lambda_coef = 0.2):
-        return (1/len(x))* ( (1/2)*np.linalg.norm(x - D.dot(h))**2 + lambda_coef*np.linalg.norm((h),ord=1))
+
+        [_,n] = np.shape(x) 
+        return (1/n)* ( (1/2)*np.linalg.norm(x - D.dot(h))**2 + lambda_coef*np.linalg.norm((h),ord=1))
 
 #==============================SPARSE CODING ALGORITHM======================================
 # Sparse coding  using Online learning algorithm
-def sparse_coding_online(x,k = 265,beta=0.3):#NOTE: Check if there are bugs
+def sparse_coding_online(x,k = 265,beta=0.3):#NOTE: Check how to make ISTA with only 1 x_t (dimension pb)
     [m,n] = np.shape(x)
-    
     #Initial dictionary (consisting of unit normm atoms sampled from the unit sphere)
     D = np.random.rand(m,k)
 
+    print("SHAPE ",np.shape(D))
+
+    print("D",D[:,1])
+    print("X",np.shape(x))
     #Initial coef
     h = np.zeros((k,n))
     A = np.zeros((k,k))
@@ -113,7 +120,7 @@ def sparse_coding_online(x,k = 265,beta=0.3):#NOTE: Check if there are bugs
     plt.plot(cost,'r') 
     #plt.hold(True)
     #plt.show()
-    for x_t in x:
+    for x_t in np.transpose(x):
         print("\nIteration ",iteration)
         print("==============================")
         #Infer code h
@@ -147,7 +154,7 @@ def sparse_coding_online(x,k = 265,beta=0.3):#NOTE: Check if there are bugs
             D_not_converged = Convergence(D_before2,D)
         iteration = iteration +1
         cost =  np.append(cost,compute_cost(x,D,h))
-        #fig.clear()
+
         plt.plot(cost,'r')
     plt.show()
     return [D,h]   
@@ -159,22 +166,32 @@ def sparse_coding(x,k = 265):
     not_converged =  True
     it = 1
     [m,n] = np.shape(x)
-
+    print("[1]  ,",[m,n])
+    #x = np.transpose(x) 
+   
     #Initial dictionary (consisting of unit normm atoms sampled from the unit sphere)
     D = np.random.rand(m,k)
 
     #Initial coef
     h = np.zeros((k,n))
 
+
+    #Print initial cost
+    cost = np.array(compute_cost(x,D,h))
+    fig = plt.figure()
+    plt.plot(cost,'r') 
     # While D has not converged
     while(not_converged):
 
         D_before = np.array(D)
 
+        print("\n================================================")
+        print("\nIteration ",it)
         # Find the sparse code h(x^(t)) for all x^(t) in
         # the training set with ISTA
         h = ISTA(h,D,x,k)
 
+        print("\n")
         # Update the dictonary
 
         # Computation A
@@ -184,17 +201,26 @@ def sparse_coding(x,k = 265):
         B = x.dot(np.transpose(h))
         
         # Run block-coordinate descent algorithm to update D
+        D_not_converged = True
+        while(D_not_converged):
+            D_before2 = np.array(D)
+            for j in range(k):
+            # For each column D[:,j]
+                    
+                # Update for the column j
+                D[:,j] = (1/A[j,j]) * (B[:,j] - (D.dot(A[:,j])) + (D[:,j].dot(A[j,j])))
 
-        D = block_coordinate_descent(D,A,B,k)
-
+                # Normalize
+                D[:,j] = D[:,j] / (np.linalg.norm(D[:,j]))
+            D_not_converged = Convergence(D_before2,D)
         it = it +1
-        print("iteration ",it)
         
         #Check convergence
-        print("================================================")
         not_converged = Convergence(D_before,D)
 
-    print(D,h)
+        cost = np.append(cost, compute_cost(x,D,h))
+        plt.plot(cost,'r')
+    plt.show()
     return [D,h]
 
 #===================================== MAIN =======================================================
@@ -203,7 +229,7 @@ def sparse_coding(x,k = 265):
 digits = datasets.load_digits()
 
 # Use sparse coding to extract the dictionary and the sparse representation
-[D,h] = sparse_coding_online(digits.data[:20])
+[D,h] = sparse_coding(np.transpose(digits.data[:100]))
 #[D,h] = sparse_coding_online(np.transpose(digits.data[:200])) # We take only 200 data (time saving)
 
 
@@ -212,21 +238,21 @@ fileD = open('D.mat','wb')
 fileH = open('h.mat','wb')
 np.save(fileD,D)
 np.save(fileH,h)
-k = 60
+k = 20
 plt.figure() # to be sure I will not overide previous plot
 
 # Plot the dictionary
 size_img = 8 # Because we have 8x8 images (digits)
-fig,table = plt.subplots(10,6)
+fig,table = plt.subplots(4,5)
 index_x = 0
 index_y = 0
 
 for i in range(k):
     img = D[:,i]
-    img = np.resize(img,(size_img,size_img))
+    img = np.reshape(img,(size_img,size_img))
     table[index_x,index_y].imshow(img, cmap='gray')
     index_y = index_y + 1
-    if index_y > 5:
+    if index_y > 4:
         index_x = index_x + 1
         index_y = 0
 fig.show()

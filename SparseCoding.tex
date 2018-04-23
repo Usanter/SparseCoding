@@ -19,13 +19,20 @@
 \title{Intership - Sparse Coding}
 \author{Thomas Rolland}
 \date{}%Remove date
+
 \begin{document}
 
 \maketitle
 
 \begin{abstract}
-Little document to summarize sparse coding. Mainly based on the Hugo Larochelle courses.
+Little document to summarize sparse coding. Mainly based on the Hugo Larochelle courses.\\
+\begin{center}
+
+\textbf{This document is a draft }
+ 
+\end{center}
 \end{abstract}
+\tableofcontents
 %\section{Pré-requis}
 %\subsection{Representation learning}
 %La Representation learning ou feature learning sont des méthodes qui permettent à un système
@@ -33,7 +40,7 @@ Little document to summarize sparse coding. Mainly based on the Hugo Larochelle 
 \subsection{Introduction}
 \paragraph{Idea} Sparse dictionary learning is a representation learning method which aims at finding a sparse representation of the input data (in form of a linear combination of basic elements (called Atoms). The idea of using learned dictionary instead of a predefined one is based on wavelets. Thie sparse learned models has recently led to state-of-the-art result for denoising, classification,...
 %UNSPERVISED LEARNING=========================================================+
-\paragraph{Unsupervised learning} Only use the inputs $x^{(t)}$ for learning. Automatically extract meaningful features of our data, leverage the availability of unlabeled data and add a data-dependent regularize to trainings.\\
+\paragraph{Unsupervised learning} Only use the inputs $x^{(t)}$ ( $X = [x_1,....,x_n]$ in $\R^{m \times n}$) for learning. Automatically extract meaningful features of our data, leverage the availability of unlabeled data and add a data-dependent regularize to trainings.\\
 
 Sparse coding is one of the neural networks used for unsupervised learning  (like restricted boltzmann machines and autoencoders).\\
 The idea behind sparse coding is: For each $x^{t}$ find a latent representation $h^{t}$ such that:
@@ -50,7 +57,7 @@ That mean, more formally:\\
 
  %Explicaiton de la formulation=========================
  \begin{itemize}
- \item[$\bullet$] D is a matrix of weights, usually refer to that matrix as a dictionary matrix (containt atoms)
+ \item[$\bullet$] D is a matrix of weights, usually refer to that matrix as a dictionary matrix (containt atoms) with $D \in  \R^{m \times k}$ ( k the number of atoms)
   \item[$\bullet$] $\| x^{(t)} - D \hspace{3px} h^{(t)} \|_2^2 $ is the reconstruction error
   \item[$\bullet$]$ D \hspace{3px} h^{(t)}$ is the reconstruction of $\hat{x}^{(t)}$
   \item[$\bullet$]$\|h^{(t)} \|_1$ is the sparsity penalty (more 0 in h we have, better it is)
@@ -68,10 +75,9 @@ The idea to solve this minimization problem is \cite{NIPS2006_2979} :
 \begin{lstlisting}[language=Python,frame=single]
 while D not_converged :
     Fix D
-    while h not_converged:
-        Minimize h              (1)
+    Minimize h           (1)
     Fix h 
-    Minimize D                  (2)
+    Minimize D           (2)
 \end{lstlisting}
 
 
@@ -82,6 +88,7 @@ We can also write $\hat{x}^{(t)} = D\hspace{3px} h(x^{(t)}) \displaystyle\sum_{\
  \centering
  \includegraphics[scale=0.5]{spacecoding_1.png}
  % spacecoding_1.png: 943x256 px, 96dpi, 24.95x6.77 cm, bb=0 0 707 192
+  \caption{Example of reconstruction using sparse coding}
 \end{figure}
 
 The images refer to $D.,_k$ (columns of D wich are not equals to 0) and the factor (1 or 0.8 in this case) refer to $h(x^{(t)} )_k$
@@ -91,6 +98,7 @@ The images refer to $D.,_k$ (columns of D wich are not equals to 0) and the fact
  \item[$\bullet$]often however, we have to learn it
 \end{itemize}
 
+In general we have $k<<n$ . But we can use an overcomplete dictionary with $k > m$.
 \subsection{Inderence of Sparse code}
 \subsubsection{Compute h}
 %Inderence of sparse code=============================================
@@ -114,8 +122,9 @@ $h^{(t)}_k = h^{(t)}_k   - \alpha (D_{., k})^T (D h^{(t)} - x^{(t)})$\\
 \begin{lstlisting}[language=Python,frame=single]
 initialize h 
 while h not_converged:
-    h = h -alpha * transpose(D) * (D*h - x)
-    h = shrink(h,alpha*lambda_coef)
+    for each h_k in h:
+        h_k = h_k -alpha * transpose(D[:,k]) * (D*h - x)
+        h_k = shrink(h_k,alpha*lambda_coef)
 return h
 \end{lstlisting}
 Here \textbf{shrink(a,b) }= [..., sign$(a_i)$ max($|a_i| - b_i$, 0), ...]\\
@@ -223,12 +232,37 @@ In practice, it's possible to improve the convergence speed of this algorithm by
 Then $\beta = \frac{\theta + 1 - \eta}{\theta +1}$, where $\theta = t \eta$ if $ t < \eta$ and $\eta^2 + t - \eta$ if $t \geq \eta$
 
 \subsection{Other algorithms}
-There are other algorithms like Efficient Shift-Invariant Dictionary learning which refers to the problem of discovering a set of latent basis vectors that capture informative \textit{local patterns} at different locations of the input sequences and not in all input sequences\cite{Zheng:2016:ESD:2939672.2939824}. But in our problem we used dictionary learning on windows of 10ms, with approach we already capture informative local patterns, we don't need to used Shift-Invariant dictionary learning.
+There are other algorithms like Efficient Shift-Invariant Dictionary learning which refers to the problem of discovering a set of latent basis vectors that capture informative \textit{local patterns} at different locations of the input sequences and not in all input sequences \cite{Zheng:2016:ESD:2939672.2939824}. But in our problem we used dictionary learning on windows of 10ms, with approach we already capture informative local patterns, we don't need to used Shift-Invariant dictionary learning.
 
+\subsection{Application for MNIST dataset}
+The MNIST database of handwritten digits, available from Yann Lecun's website. MNIST has a training set of 60,000 examples, and a test set of 10,000 examples. It is a subset of a larger set available from NIST. The digits have been size-normalized and centered in a fixed-size image.
+\begin{figure}[h]
+ \centering
+ \includegraphics[scale=0.5]{MnistExamples.png}
+ % MnistExamples.png: 594x361 px, 72dpi, 20.96x12.74 cm, bb=0 0 594 361
+ \caption{Example of MNIST's handwitten digits}
+\end{figure}
+\subsubsection{Prototype}
+My first task is to realise a Sparse Coding prototype to compute Sparse Coding on this dataset, using Python. The aim here, is to understand the underlying principles of this method, you can found this prototype in \texttt{Code directory} of this repository as \texttt{SparseCoding.py}. \\
+There are some results of this prototype: For time saving I used only 100 digits as input.
+
+\subsubsection{SPAMS}
+SPAMS (SPArse Modeling Software) is an optimization toolbox for solving various sparse estimation problems.
+\begin{itemize}
+ \item Dictionary learning and matrix factorization (NMF, sparse PCA, ...)
+ \item Solving sparse decomposition problems with LARS, coordinate descent, OMP, SOMP, proximal methods
+ \item Solving structured sparse decomposition problems (l1/l2, l1/linf, sparse group lasso, tree-structured regularization, structured sparsity with overlapping groups,...).
+\end{itemize}
+It is developed and maintained by Julien Mairal (Inria), and contains sparse estimation methods resulting from collaborations with various people: notably, Francis Bach, Jean Ponce, Guillermo Sapiro, Rodolphe Jenatton and Guillaume Obozinski.\\
+
+%====================PART 2 SPARSE CODING FOR SR=========
 \section{Sparse Coding for speech recognition}
-In this part of the paper we will see novel feature exraction technique based on the principles of sparse coding. Sparse codigin deals with the problem of how represent a given audio input as a linear combination of a minimum number of basis function. The weights of the linear combination are used as feature for speech recognition (acoustic modeling).
+In this part of the paper we will see novel feature exraction technique based on the principles of sparse coding \cite{DL_speech_reco}. Sparse codigin deals with the problem of how represent a given audio input as a linear combination of a minimum number of basis function. The weights of the linear combination are used as feature for speech recognition (acoustic modeling). Note the input dimensionality is typically \textbf{much} less than the number of atoms in the dictionary \textit{i.e.} we use overcomplete dictionary.\\
+We use Sparse Coding algorithm as describe before and we get the dictionary D and  the matrix of sparse coefficients  h.\\
+\paragraph{Reflection path} In \cite{DL_speech_reco} they used spectro-temporal speech domain wich is obtained by performing a short time Fourier transform (STFT) with an analysis window of length 25 ms and a frameshit of 10 ms on the input signal. Log critical band energies are subsequently obtained by projecting the magnitude square values of the STFT output on a set of frequency weights, which are equally spaced on the Bark frequence scale, and then applying a logarithm on the output projections.
 \bibliographystyle{apalike}
 \bibliography{efficient-sparse-coding-algorithms.bib}
+
 \end{document}
 %KSVD
 %OMP
