@@ -10,6 +10,8 @@
 \usepackage{mathtools}
 \usepackage{tcolorbox}
 \usepackage{listings}
+\usepackage{subcaption} % pour le subplot
+
 \newcommand{\R}{\mathbb{R}}  
 \newcommand{\Z}{\mathbb{Z}}
 \newcommand{\N}{\mathbb{N}}
@@ -235,7 +237,7 @@ Then $\beta = \frac{\theta + 1 - \eta}{\theta +1}$, where $\theta = t \eta$ if $
 There are other algorithms like Efficient Shift-Invariant Dictionary learning which refers to the problem of discovering a set of latent basis vectors that capture informative \textit{local patterns} at different locations of the input sequences and not in all input sequences \cite{Zheng:2016:ESD:2939672.2939824}. But in our problem we used dictionary learning on windows of 10ms, with approach we already capture informative local patterns, we don't need to used Shift-Invariant dictionary learning.
 
 \subsection{Application for MNIST dataset}
-The MNIST database of handwritten digits, available from Yann Lecun's website. MNIST has a training set of 60,000 examples, and a test set of 10,000 examples. It is a subset of a larger set available from NIST. The digits have been size-normalized and centered in a fixed-size image.
+The MNIST database of handwritten digits, available from Yann Lecun's website. MNIST has a training set of 60,000 examples, and a test set of 10,000 examples. It is a subset of a larger set available from NIST. The digits have been size-normalized and centered in a fixed-size image. In my test I'll use 55000 examples from the training set (using Tensorflow datasets). These are $28 \times 28$ images. One way to evaluate the quality of our results is to comparing the original data vs the reconstructed ones. 
 \begin{figure}[h]
  \centering
  \includegraphics[scale=0.5]{MnistExamples.png}
@@ -244,7 +246,7 @@ The MNIST database of handwritten digits, available from Yann Lecun's website. M
 \end{figure}
 \subsubsection{Prototype}
 My first task is to realise a Sparse Coding prototype to compute Sparse Coding on this dataset, using Python. The aim here, is to understand the underlying principles of this method, you can found this prototype in \texttt{Code directory} of this repository as \texttt{SparseCoding.py}. \\
-There are some results of this prototype: For time saving I used only 100 digits as input.
+These are some results of this prototype: For time saving I used only 100 digits as input.
 
 \subsubsection{SPAMS}
 SPAMS (SPArse Modeling Software) is an optimization toolbox for solving various sparse estimation problems.
@@ -254,6 +256,133 @@ SPAMS (SPArse Modeling Software) is an optimization toolbox for solving various 
  \item Solving structured sparse decomposition problems (l1/l2, l1/linf, sparse group lasso, tree-structured regularization, structured sparsity with overlapping groups,...).
 \end{itemize}
 It is developed and maintained by Julien Mairal (Inria), and contains sparse estimation methods resulting from collaborations with various people: notably, Francis Bach, Jean Ponce, Guillermo Sapiro, Rodolphe Jenatton and Guillaume Obozinski.\\
+You can find my code from Sparse Coding method on MNIST using SPAMS toolbox on my github \texttt{test\_spams.py}.\\
+\newpage
+\paragraph{Test 1}
+In the first test I used 256 atoms, 2 000 iterations and $\lambda$ = 0.015 to learn the dictionary and the sparse coefficients. 
+w\begin{figure}[h]
+ \centering
+ \includegraphics[scale=0.7]{Results/SPAMS_X_ALL_K256/D.png}
+ % D.png: 434x648 px, 100dpi, 11.02x16.46 cm, bb=0 0 312 467
+ \caption{Few atoms of D}
+\end{figure}
+
+ \begin{figure}[h]
+ \begin{subfigure}{.5\textwidth}
+ \centering
+ \includegraphics[scale=0.35]{Results/SPAMS_X_ALL_K256/recons_1.png}
+  \caption{Reconstructed 1 vs Original 1}
+ % module-capteur-laser.jpg: 600x600 px, 72dpi, 21.17x21.17 cm, bb=0 0 600 600
+ \end{subfigure}%
+  \begin{subfigure}{.3\textwidth}
+ \centering
+ \includegraphics[scale=0.35]{Results/SPAMS_X_ALL_K256/recons_3.png}
+ % module-capteur-laser.jpg: 600x600 px, 72dpi, 21.17x21.17 cm, bb=0 0 600 600
+  \caption{Reconstructed 3 vs Original 3}
+
+ \end{subfigure}%
+\end{figure}
+
+\newpage
+
+\paragraph{Test 2}In the second test I used 1024 atoms, 1 000 iterations and $\lambda = \frac{1.2}{\sqrt{m}}$ \cite{Mairal:2009:ODL:1553374.1553463} \textit{(In my case $\approx 0.0042857$)}.
+\begin{figure}[h]
+ \centering
+ \includegraphics[scale=0.7]{Results/SPAMS_X_ALL_K1024/D.png}
+ % D.png: 1873x1022 px, 100dpi, 47.57x25.96 cm, bb=0 0 1349 736
+ \caption{Few atoms of D}
+\end{figure}
+ \begin{figure}[h]
+ \begin{subfigure}{.5\textwidth}
+ \centering
+ \includegraphics[scale=0.4]{Results/SPAMS_X_ALL_K1024/lambdaopti_recons1.png}
+  \caption{Reconstructed 1 vs Original 1}
+ % module-capteur-laser.jpg: 600x600 px, 72dpi, 21.17x21.17 cm, bb=0 0 600 600
+ \end{subfigure}%
+  \begin{subfigure}{.3\textwidth}
+ \centering
+ \includegraphics[scale=0.29]{Results/SPAMS_X_ALL_K1024/lambdaopti_recons3.png}
+ % module-capteur-laser.jpg: 600x600 px, 72dpi, 21.17x21.17 cm, bb=0 0 600 600
+  \caption{Reconstructed 3 vs Original 3}
+
+ \end{subfigure}%
+\end{figure}
+\newpage
+\paragraph{Test 3} In the third test I used 1024 atoms, 1 000 iterations and $\lambda = 5$.
+\begin{figure}[h]
+ \centering
+ \includegraphics[scale=0.7]{Results/SPAMS_X_ALL_K1024/D_lambdagrand.png}
+ % D_lambdagrand.png: 936x994 px, 100dpi, 23.77x25.25 cm, bb=0 0 674 716
+ \caption{Few atoms of D}
+\end{figure}
+
+ \begin{figure}[h]
+ \begin{subfigure}{.5\textwidth}
+ \centering
+ \includegraphics[scale=0.4]{Results/SPAMS_X_ALL_K1024/lambdagrand_recons1.png}
+  \caption{Reconstructed 1 vs Original 1}
+ % module-capteur-laser.jpg: 600x600 px, 72dpi, 21.17x21.17 cm, bb=0 0 600 600
+ \end{subfigure}%
+  \begin{subfigure}{.3\textwidth}
+ \centering
+ \includegraphics[scale=0.39]{Results/SPAMS_X_ALL_K1024/lambdagrand_recons3.png}
+ % module-capteur-laser.jpg: 600x600 px, 72dpi, 21.17x21.17 cm, bb=0 0 600 600
+  \caption{Reconstructed 3 vs Original 3}
+
+ \end{subfigure}%
+\end{figure}
+
+\subparagraph{Interpretation}
+
+\newpage
+\paragraph{Test 4} In the fourth test I used 2048 atoms, 1 000 iterations and $\lambda = \frac{1.2}{\sqrt{m}}$
+\begin{figure}[h]
+ \centering
+ \includegraphics[scale=0.7]{Results/SPAMS_X_ALL_K_2048/D_K2048.png}
+ % D_K2048.png: 936x994 px, 100dpi, 23.77x25.25 cm, bb=0 0 674 716
+ \caption{Few atoms of D}
+ \end{figure}
+ 
+  \begin{figure}[h]
+ \begin{subfigure}{.5\textwidth}
+ \centering
+ \includegraphics[scale=0.4]{Results/SPAMS_X_ALL_K_2048/recons1.png}
+  \caption{Reconstructed 1 vs Original 1}
+ % module-capteur-laser.jpg: 600x600 px, 72dpi, 21.17x21.17 cm, bb=0 0 600 600
+ \end{subfigure}%
+  \begin{subfigure}{.3\textwidth}
+ \centering
+ \includegraphics[scale=0.39]{Results/SPAMS_X_ALL_K_2048/recons3.png}
+ % module-capteur-laser.jpg: 600x600 px, 72dpi, 21.17x21.17 cm, bb=0 0 600 600
+  \caption{Reconstructed 3 vs Original 3}
+
+ \end{subfigure}%
+\end{figure}
+
+\newpage
+\subsection{Application for Lenna}
+
+\begin{figure}[h]
+ \centering
+ \includegraphics[scale=0.3]{Results/Lenna/lenna_1024.png}
+ % lenna_1024.png: 936x994 px, 100dpi, 23.77x25.25 cm, bb=0 0 674 716
+ \caption{Some atoms of D when K = 1024}
+\end{figure}
+\begin{figure}[h]
+ \centering
+ \includegraphics[scale=0.7]{Results/Lenna/lenna_2048.png}
+ % lenna_2048.png: 640x480 px, 100dpi, 16.26x12.19 cm, bb=0 0 461 346
+ \caption{Some atoms of D when K = 2048}
+\end{figure}
+\newpage
+\subsection{Dictionary learning and sparse coding for unsupervised clustering}
+Whereas the previous tests seems have good result, one question appears: \\ \textit{What make us confident about the fact that  two close images (two handwitten 3 for example) have close coefficients representation h ?}\\
+To answer that question the propose an algorithm for clustering datasets that are well reprensented in the sparse modeling framework.
+
+\begin{center}
+$\min{D_i, C_i} \sum_{i=1}^{K} \sum_{x_j \in C_i} R(x_j, D_i)$
+ 
+\end{center}
 
 %====================PART 2 SPARSE CODING FOR SR=========
 \section{Sparse Coding for speech recognition}
@@ -267,3 +396,4 @@ We use Sparse Coding algorithm as describe before and we get the dictionary D an
 %KSVD
 %OMP
 % k doit etre deux fois trois plus grand que 8x8
+%sapiro Author 

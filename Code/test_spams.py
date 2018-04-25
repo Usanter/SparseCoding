@@ -2,6 +2,7 @@ import spams
 import numpy as np
 import time
 import sys
+import math
 from tensorflow.examples.tutorials.mnist import input_data
 
 
@@ -18,8 +19,9 @@ X = np.transpose(digits.data)
 X = np.asfortranarray(X,dtype=float)
 
 
+lambda1 = 1.2/math.sqrt(m)
 # Spams parameters
-param = {'mode':5, 'K':265, 'lambda1':0.015, 'numThreads':5, 'batchsize':400, 'iter':2000}
+param = {'mode':5, 'K':1024, 'lambda1':lambda1, 'numThreads':5, 'batchsize':400, 'iter':1000}
 
 #===========First Experiment================
 
@@ -29,13 +31,13 @@ param = {'mode':5, 'K':265, 'lambda1':0.015, 'numThreads':5, 'batchsize':400, 'i
 D= spams.trainDL(X,**param)
 
 # Find sparse linear combination 
-H = spams.omp(X,D,lambda1=0.015) 
+H = spams.omp(X,D,lambda1) 
 #tac = time.time()
 #t = tac - tic
 
 #D = np.array(D) #usefull ?
 
-fileD = open('D_spams4.mat','wb')
-fileH = open('h_spams4.mat','wb')
+fileD = open('D_spams_lambdaDyn.mat','wb')
+fileH = open('h_spams4_lambdaDyn.mat','wb')
 np.save(fileD,D)
 np.save(fileH,H)
