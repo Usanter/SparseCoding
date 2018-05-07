@@ -20,7 +20,7 @@
 \DeclareMathOperator*{\argmax}{arg\,max}
 \DeclareMathOperator*{\argmin}{arg\,min}
 %opening
-\title{Intership - Sparse Coding and Dictionary learning}
+\title{Intership - Sparse Coding and w learning}
 \author{Thomas Rolland}
 \date{}%Remove date
 
@@ -376,6 +376,7 @@ w\begin{figure}[h]
 \end{figure}
 \newpage
 \subsection{Dictionary learning and sparse coding for unsupervised clustering}
+\label{sec:Clustering}
 Whereas the previous tests seems have good result, one question appears: \\ \textit{What make us confident about the fact that  two close images (two handwitten 3 for example) have close coefficients representation h ?}\\
 Sprechmann and Sapiro \cite{5494985} propose an algorithm to cluster datasets that are well represented in the sparse modeling framework with a set of K learned dictionaries. The main idea is, given a set of K dictionaries, find for each signals the dictionary for which the "best" sparse decomposition is obtainedn, with :
 
@@ -408,6 +409,92 @@ The main idea is to construct a similarity matrix and use it as the input for  a
 \end{itemize}
 In this two case, the similarity matrixes are positive semidefinite and can be associated with a graph: $G_1 = \{X,S_1\}$ and $G_2 = \{D,S_2\}$ where the data (respectivly atoms) are the sets of vertexes with the corresponding $S_i$ as edge weights matrixes. This graph is partitioned using standard spectral clustering algorithm to obtain the initialization.\\
 However, when K is large (the number of class), the performance of initial clusterization decreases. To fix this problem \cite{5494985} proposed to stat with the whole set as the only partition and at each itation we subdivise in two sets each of the current partitions, the procedure stops when the desired number of clusters is reached.
+
+\newpage
+\section{Discriminative Dictionary }
+There are serveral approach for discriminative Dictionary Learning enumerate by \cite{8294264}:
+\begin{itemize}
+ \item In presence of label:
+    \begin{enumerate}
+     \item Learn one dictionary per class
+     \item Prune large dictionaries
+     \item Jointly learn dictionary and classifier
+     \item Embed class label into the learning of sparse coefficients
+     \item Learn a histogram of dictionary element over signal constituents
+    \end{enumerate}
+
+ \item For weakly supervised:\\
+    Serveral max margin based, non-convolutive, syntgesis dictionary learning approaches.
+\end{itemize}
+However in our problem of extract new features for speech we must compare each $\alpha$ with other, thus we must use only one dictionary.
+\subsection{One dictionary per class}
+The idea is to extend proposed method in  section \ref{sec:Clustering} by adding a term $\mathcal{Q}(D_i,D_j)$ that promotes incoherence between the differents dictionaries, e.g. this term encourage dictionaries to  be independent as possible :
+\begin{center}
+ $\underset{D_i, C_i}{\min} \sum_{i=1}^{K} \sum_{x_j \in C_i} \mathcal{R}(x_j,D_i) + \eta \sum_{i \neq j} \mathcal{Q}(D_i,D_j)$
+\end{center}
+For example we can take $\mathcal{Q}(D_i,D_j) = \|D^T_iD_j\|^2_F $ with F denotes Frobenius norm.
+
+\subsection{Supervised Dictionary learning}
+\subsubsection{Problem formulation}
+In \cite{mairal:inria-00322431} the signal may belong to any of $p$ diffrent classes and they model the signal using a single shared D. The create a set of $p$ decision functions $g_i(x,\alpha,\theta)$ (i = 1,...,p). Where: \\
+\begin{center}
+  $g_i(x,\alpha,\theta) =     \left\{
+                \begin{array}{ll}
+                 gi > 0 $ if $x \in $class i $\\
+                g_i \leq 0$ otherwise$\\
+                \end{array}
+              \right.$
+\end{center}
+The vector $\theta$ parametrizes the model and will be jointly learned with the dictionary D. There are two kinds of models in this paper:\\
+\begin{itemize}
+ \item \underbar{Linear in $\alpha$:} $g_i(x,\alpha,\theta) = w_i^T \alpha + b_i $ where $ \theta = \{ w_i \in \R^k, b_i \in \R\}_{i=1}^p$
+ \item \underbar{Bilinear in $x$ and $\alpha$: }$g_i(x,\alpha,\theta) = x^T W_i \alpha + b_i$ where $ \theta = \{W_i \in \R^{n \times k}, b_i \in \R\}_{i=1}^p$ 
+\end{itemize}
+They define a \textit{softmax} discriminative cost function as :
+\begin{center}
+ $\mathcal{C}_i(x_1,..., x_p) = log(\sum_{i=1}^p e^{x_j - x_i})$
+\end{center}
+Given x, a input signal, with $D$ and $\theta$ fixed, the supervised sparse coding problem for the class $p$ can be computing by :
+\begin{center}
+ $S^*_i(x,D,\theta) = \underset{\alpha}{\min}S_i(\alpha,x,D,\theta)$
+\end{center}
+where
+\begin{center}
+ $S_i(\alpha,x,D,\theta) = \mathcal{C}_i(\{g_j(x,\alpha,\theta)\}^p_{j=1}) + \lambda_0 \|x - D\alpha\|^2_2 + \lambda_1 \|\alpha\|_1$
+\end{center}
+Then, the classification problem can be compute by: 
+\begin{center}
+ 
+$i^*(x,D,\theta) = \underset{i=1,...,p}{\argmin}S^*_i(x,D,\theta)$
+\end{center}
+
+\subsubsection{Learning $D$ and $\theta$}
+The most direct method for learning $D$ and $\theta$ is to minimize with respect to these (with $T_i$ a sample of input signals corresponding to the class i):
+\begin{center}
+ $\underset{D,\theta}{\min}(\sum_{i=1}^p \sum_{j \in T_i}S^*_i(x_j,D,\theta))+ \lambda_2 \|\theta\|^2_2$
+\end{center}
+With  $ \|\theta\|^2_2$ to prevent overfitting. They reffer to this model as SDL-G (Supervised Dictionary Learning - Generative) \cite{mairal:inria-00322431}.\\
+A more discriminative approach is not only make $S^*_i$ small for signals with label i but also make the value of $S^*_j$ (with $i \neq j)$ greater than $S^*_i$. To do that they use the softmax cost function $\mathcal{C}_i$:
+\begin{center}
+  $\underset{D,\theta}{\min}(\sum_{i=1}^p \sum_{j \in T_i} \mathcal{C}_i(\{ S^*_l(x_j,D,\theta)\}^{p}_{l=1}))+ \lambda_2 \|\theta\|^2_2$
+\end{center}
+But this more difficult to solve, thus they adopt a mixed formulation with SDL-G :
+\begin{center}
+   $\underset{D,\theta}{\min}(\sum_{i=1}^p \sum_{j \in T_i} \mu \mathcal{C}_i(\{ S^*_l(x_j,D,\theta)\}^{p}_{l=1}) + (1-\mu)S^*_i(x_j,D,\theta))+ \lambda_2 \|\theta\|^2_2$
+\end{center}
+They refer to this model as SDL-D (Supervised Dictionary Learning - Discriminative). With $\mu$ which control the trade-ff between reconstruction and discrimination.
+
+\subsubsection{Optimization  procedure}
+\paragraph{SDL-G}
+When $\mu = 0$ or directly SDL-G have the same properties than classical dictionary learning techniques: Using block coordinate descent  consist of iterating between \textit{supervised sparse coding}, where $D$ and $\theta$ are fixed and optimize $\alpha$, and \textit{supervised dictionary update}, where  $\alpha$ is fixed but $D$ and $\theta$ are updated.
+\paragraph{SDL-D} However the discriminative version of SDL (where $\mu \neq 0$) is not convex (even when $D$ and $\theta$ or $\alpha$ are fixed). To reach a local minimum for this problem, they have chosen a continuation method: Starting from the generative case and ending with the discriminative one.
+\begin{figure}[h]
+ \centering
+ \includegraphics[scale=0.9]{SDL-D.png}
+ % SDL-D.png: 532x215 px, 96dpi, 14.07x5.69 cm, bb=0 0 399 161
+ \caption{SDL: Supervised dictionary learning Algorithm  \cite{mairal:inria-00322431}}
+\end{figure}
+
 
 \newpage 
 \section{Convolutional Sparse Coding}
@@ -516,7 +603,7 @@ $\tilde{s}_k = \mathcal{M}\{\frac{1}{\mu_s} \sqrt{D}^{-1}(  \mathcal{F}^{-1}\{\h
 Convergence may be reach if $\mu^{(i)} \rightarrow \infty$:
 
 \begin{center}
-  $s^* =     \left\{
+  $\mu^{(i+1)} =     \left\{
                 \begin{array}{ll}
                  \tau \mu^{(i)}$ if $\mu^{(i)} < \mu_{max} \\
                 \mu^{(i)}$ otherwise$\\
@@ -524,8 +611,6 @@ Convergence may be reach if $\mu^{(i)} \rightarrow \infty$:
               \right.$
 \end{center}
 
-\newpage
-\section{Discriminative Dictionary }
 %====================PART 2 SPARSE CODING FOR SR=========
 \newpage
 \section{Sparse Coding for speech recognition}
