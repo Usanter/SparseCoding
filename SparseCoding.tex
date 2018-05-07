@@ -47,47 +47,47 @@ Little document to summarize state-of-the-art sparse coding and dictionary learn
 \paragraph{Unsupervised learning} Only use the inputs $x^{(t)}$ ( $X = [x_1,....,x_n]$ in $\R^{m \times n}$) for learning. Automatically extract meaningful features of our data, leverage the availability of unlabeled data and add a data-dependent regularize to trainings.\\
 
 Sparse coding is one of the neural networks used for unsupervised learning  (like restricted boltzmann machines and autoencoders).\\
-The idea behind sparse coding is: For each $x^{t}$ find a latent representation $h^{t}$ such that:
+The idea behind sparse coding is: For each $x^{t}$ find a latent representation $\alpha^{t}$ such that:
 \begin{itemize}
- \item[$\bullet$] It is sparese: the vector $h^{t}$ has many zeros (only few nonzero elements)
+ \item[$\bullet$] It is sparese: the vector $\alpha^{t}$ has many zeros (only few nonzero elements)
  \item[$\bullet$] We can reconstruct the original input $x^{(t)}$ as well as possible.
 \end{itemize}
 That mean, more formally:\\
 
 %Formulation du problème=============================
 \begin{center}
- $\min\limits_{D} \frac{1}{T} \sum_{t=1}^{T}  \min\limits_{h^{(t)}} \frac{1}{2} \| x^{(t)} - D \hspace{3px} h^{(t)} \|_2^2 + \lambda \|h^{(t)} \|_1$\\
+ $\min\limits_{D} \frac{1}{T} \sum_{t=1}^{T}  \min\limits_{\alpha^{(t)}} \frac{1}{2} \| x^{(t)} - D \hspace{3px} \alpha^{(t)} \|_2^2 + \lambda \|\alpha^{(t)} \|_1$\\
 \end{center}
 
  %Explicaiton de la formulation=========================
  \begin{itemize}
  \item[$\bullet$] D is a matrix of weights, usually refer to that matrix as a dictionary matrix (containt atoms) with $D \in  \R^{m \times k}$ ( k the number of atoms)
-  \item[$\bullet$] $\| x^{(t)} - D \hspace{3px} h^{(t)} \|_2^2 $ is the reconstruction error
-  \item[$\bullet$]$ D \hspace{3px} h^{(t)}$ is the reconstruction of $\hat{x}^{(t)}$
-  \item[$\bullet$]$\|h^{(t)} \|_1$ is the sparsity penalty (more 0 in h we have, better it is)
+  \item[$\bullet$] $\| x^{(t)} - D \hspace{3px} \alpha^{(t)} \|_2^2 $ is the reconstruction error
+  \item[$\bullet$]$ D \hspace{3px} \alpha^{(t)}$ is the reconstruction of $\hat{x}^{(t)}$
+  \item[$\bullet$]$\|\alpha^{(t)} \|_1$ is the sparsity penalty (more 0 in h we have, better it is)
  \end{itemize}
 This two objectives fight each other. But it still a optimization problem (cf min), and we'll try to optimize it for each training example $x^{(t)}$. This is why we have a sum over all the training examples.
 \newline
 
 %Contraintes sur D======================================
-\indent We also constrain the columns of D to be of norm 1 (otherwise, D could grow big while $h^{(t)}$ becomes small to satisfy the prior). And sometimes the columns are constrained to be no greather than 1.\\
+\indent We also constrain the columns of D to be of norm 1 (otherwise, D could grow big while $\alpha^{(t)}$ becomes small to satisfy the prior). And sometimes the columns are constrained to be no greather than 1.\\
 
-However, $h^{(t)}$ is now a complicated function of $x^{(t)}$:\\
-Encoder is the minimization $h(x^{(t)}) = arg\min\limits_{h^{(t)}}= \frac{1}{2} \| x^{(t)} - D \hspace{3px} h^{(t)} \|_2^2 + \lambda \|h^{(t)} \|_1$, so the optimization problem is more complicated than a simple non linear problem.\\
+However, $\alpha^{(t)}$ is now a complicated function of $x^{(t)}$:\\
+Encoder is the minimization $\alpha(x^{(t)}) = arg\min\limits_{\alpha^{(t)}}= \frac{1}{2} \| x^{(t)} - D \hspace{3px} \alpha^{(t)} \|_2^2 + \lambda \|\alpha^{(t)} \|_1$, so the optimization problem is more complicated than a simple non linear problem.\\
 The idea to solve this minimization problem is \cite{NIPS2006_2979}
 
 \begin{lstlisting}[language=Python,frame=single]
 while D not_converged :
     Fix D
-    Minimize h           (1) // Sparse Coding step
-    Fix h 
+    Minimize alpha     (1) // Sparse Coding step
+    Fix alpha
     Minimize D           (2) // Update Dictionary step
 \end{lstlisting}
 
 But there are some improvement like K-SVD algorithm \cite{KSVD}, which compute column by column a SVD computation over the relevant examples.
 %DICTIONARY==================================================================+  
 \paragraph{Dictionary}
-We can also write $\hat{x}^{(t)} = D\hspace{3px} h(x^{(t)}) \displaystyle\sum_{\substack{k s.t.\\ h(x^{(t)})_k\neq 0}}  D.,_k h(x^{(t)} )_k$
+We can also write $\hat{x}^{(t)} = D\hspace{3px} \alpha(x^{(t)}) \displaystyle\sum_{\substack{k s.t.\\ \alpha(x^{(t)})_k\neq 0}}  D.,_k \alpha(x^{(t)} )_k$
 \begin{figure}[h]
  \centering
  \includegraphics[scale=0.5]{spacecoding_1.png}
@@ -95,7 +95,7 @@ We can also write $\hat{x}^{(t)} = D\hspace{3px} h(x^{(t)}) \displaystyle\sum_{\
   \caption{Example of reconstruction using sparse coding}
 \end{figure}
 
-The images refer to $D.,_k$ (columns of D wich are not equals to 0) and the factor (1 or 0.8 in this case) refer to $h(x^{(t)} )_k$
+The images refer to $D.,_k$ (columns of D wich are not equals to 0) and the factor (1 or 0.8 in this case) refer to $\alpha(x^{(t)} )_k$
 \\We also refer to D as the dictionary:
 \begin{itemize}
  \item[$\bullet$]in certain applications, we know what dictionary matrix to use
@@ -105,24 +105,24 @@ The images refer to $D.,_k$ (columns of D wich are not equals to 0) and the fact
 In general we have $k<<n$ . But we can use an overcomplete dictionary with $k > m$.
 \subsection{Inderence of Sparse code}
 The orginal problem is a combinatorial problem (proven to be NP-hard). To solve this problem we use relaxation methods (then we can smooth the $L_0$ and use continious optimization techniques) or greedy methos (then build the solution one non-zero element at time).
-\subsubsection{Compute h }
+\subsubsection{Compute $\alpha$ }
 %Inderence of sparse code=============================================
 \paragraph{Idea}
 Here we develop  step (1) of our algorithm.\\
 Assume we are given a dictionary matrix D, how do we compute $h(x^{(t)})$. We have to optimize:
 \begin{center}  Basic Pursuit:
-$l(x^{(t)}) = \frac{1}{2} \| x^{t}- D h^{(t)} \|^{2}_{2} + \lambda \|h^{(t)}\|_1 w.r.t. h^{(t)}$\\ 
+$l(x^{(t)}) = \frac{1}{2} \| x^{t}- D \alpha^{(t)} \|^{2}_{2} + \lambda \|\alpha^{(t)}\|_1 w.r.t. \alpha^{(t)}$\\ 
 \end{center} 
 Here we used relaxation method to switch from norm $l_0$ to $l_1$ know as the  Basic Pursuit (vs Matching Pursuit,a greedy method,  if we keep $l_0$ norm and find one atom at a time).\\
 We could use a gradient descent method to solve this minimization:\\
 \begin{center}
-$\Delta_{h^{(t)}} l(x^{(t)}) = D^T (D h^{(t)} - x^{(t)}) + \lambda sign(h^{(t)})$
+$\Delta_{\alpha^{(t)}} l(x^{(t)}) = D^T (D \alpha^{(t)} - x^{(t)}) + \lambda sign(\alpha^{(t)})$
 \end{center}
-The issue is $l_1$ norm is not differentiable at 0. The solution is : if $h^{(t)}$ changes sign because of $l_1$ norm gradient then clamp to 0.That mean :
+The issue is $l_1$ norm is not differentiable at 0. The solution is : if $\alpha^{(t)}$ changes sign because of $l_1$ norm gradient then clamp to 0.That mean :
 
-$h^{(t)}_k = h^{(t)}_k   - \alpha (D_{., k})^T (D h^{(t)} - x^{(t)})$\\
-\indent if  sign($h^{(t)}_k) \neq$ sign$(h^{(t)}_k - \alpha \lambda$ sign$(h^{(t)}_k) )$ then: $h^{(t)}_k = 0$\\
-\indent else $h^{(t)}_k = h^{(t)}_k - \alpha \lambda$ sign$(h^{(t)}_k)$
+$\alpha^{(t)}_k = \alpha^{(t)}_k   - \alpha (D_{., k})^T (D \alpha^{(t)} - x^{(t)})$\\
+\indent if  sign($\alpha^{(t)}_k) \neq$ sign$(\alpha^{(t)}_k - \alpha \lambda$ sign$(\alpha^{(t)}_k) )$ then: $\alpha^{(t)}_k = 0$\\
+\indent else $\alpha^{(t)}_k = \alpha^{(t)}_k - \alpha \lambda$ sign$(\alpha^{(t)}_k)$
 \paragraph{ISTA (Iterative Shrinkage and Thresholding Algorithm)}
 :
 \begin{lstlisting}[language=Python,frame=single]
@@ -140,11 +140,11 @@ There are three algorithms used for  dictionary update.
 \paragraph{Algorithm 1: A gradient descent method}
 Our original problem is:
 \begin{center}
- $\min\limits_{D} \frac{1}{T} \sum_{t=1}^{T}  \min\limits_{h^{(t)}} \frac{1}{2} \| x^{(t)} - D \hspace{3px} h^{(t)} \|_2^2 + \lambda \|h^{(t)} \|_1$\\
+ $\min\limits_{D} \frac{1}{T} \sum_{t=1}^{T}  \min\limits_{\alpha^{(t)}} \frac{1}{2} \| x^{(t)} - D \hspace{3px} \alpha^{(t)} \|_2^2 + \lambda \|\alpha^{(t)} \|_1$\\
 \end{center}
-But here we assume $h(x^{(t)})$ doesn't depend on D. So we must minimize:
+But here we assume $\alpha(x^{(t)})$ doesn't depend on D. So we must minimize:
 \begin{center}
- $\min\limits_{D} \frac{1}{T} \sum_{t=1}^{T}  \min\limits_{h^{(t)}} \frac{1}{2} \| x^{(t)} - D \hspace{3px} h^{(t)} \|_2^2 $\\
+ $\min\limits_{D} \frac{1}{T} \sum_{t=1}^{T}  \min\limits_{\alpha^{(t)}} \frac{1}{2} \| x^{(t)} - D \hspace{3px} \alpha^{(t)} \|_2^2 $\\
 \end{center}
 \begin{lstlisting}[language=Python,frame=single]
 while D not_converged:
@@ -160,26 +160,26 @@ return D
 \paragraph{Algorithm 2: Block-coordinate descent}
 We must minimize:
 \begin{center}
- $\min\limits_{D} \frac{1}{T} \sum_{t=1}^{T}  \min\limits_{h^{(t)}} \frac{1}{2} \| x^{(t)} - D \hspace{3px} h^{(t)} \|_2^2 $\\
+ $\min\limits_{D} \frac{1}{T} \sum_{t=1}^{T}  \min\limits_{\alpha^{(t)}} \frac{1}{2} \| x^{(t)} - D \hspace{3px} \alpha^{(t)} \|_2^2 $\\
 \end{center}
 The idea is to solve for each column $D_{., j}$ in cycle (that mean to optimize in one direction at time). For that we must set the gradient for $D_{., j}$ to zero.\\
 We have:
 \begin{center}
- $0 = \frac{1}{T}\sum_{t=1}^{T} (x^{(t)} - D h(x^{(t)}))$ $h^{(t)}_{j}$\\ \vspace{0.4cm}
+ $0 = \frac{1}{T}\sum_{t=1}^{T} (x^{(t)} - D h(x^{(t)}))$ $\alpha^{(t)}_{j}$\\ \vspace{0.4cm}
  We separe $D_{.,j}$ from the rest of D:\\
- $0 = \frac{1}{T}\sum_{t=1}^{T} (x^{(t)} - (\sum_{i \neq j}D_{.,i}$ $h(x^{(t)})_i$ $ )$  $ - (D_{.,j}$ $h(x^{(t)})_j)$ ) $ h^{(t)}_{j}$\\ \vspace{0.4cm}
+ $0 = \frac{1}{T}\sum_{t=1}^{T} (x^{(t)} - (\sum_{i \neq j}D_{.,i}$ $h(x^{(t)})_i$ $ )$  $ - (D_{.,j}$ $h(x^{(t)})_j)$ ) $ \alpha^{(t)}_{j}$\\ \vspace{0.4cm}
  Our aim is to find the value of $D_{.,j}$, we must isolate $D_{.,j}$ :\\
- $0 = \frac{1}{T} \sum_{t=1}^{T}(x^{(t)} h^{(t)}_{j} - (\sum_{i \neq j}D_{.,i}$ $h^{(t)}_i$ $h^{t}_{j} )$  $ - (D_{.,j}$ $h^{(t)2}_j))$\\ \vspace{0.2cm}
+ $0 = \frac{1}{T} \sum_{t=1}^{T}(x^{(t)} \alpha^{(t)}_{j} - (\sum_{i \neq j}D_{.,i}$ $\alpha^{(t)}_i$ $\alpha^{t}_{j} )$  $ - (D_{.,j}$ $\alpha^{(t)2}_j))$\\ \vspace{0.2cm}
  
-  $0 = (\sum_{t=1}^{T}(x^{(t)} h^{(t)}_{j} - (\sum_{i \neq j}D_{.,i}$ $h^{(t)}_i$ $h^{t}_{j} )$  $) - ( \sum_{t=1}^{T}( D_{.,j}$ $h^{(t)2}_j)))$\\ \vspace{0.2cm}
+  $0 = (\sum_{t=1}^{T}(x^{(t)} \alpha^{(t)}_{j} - (\sum_{i \neq j}D_{.,i}$ $\alpha^{(t)}_i$ $\alpha^{t}_{j} )$  $) - ( \sum_{t=1}^{T}( D_{.,j}$ $\alpha^{(t)2}_j)))$\\ \vspace{0.2cm}
   
-  $  \sum_{t=1}^{T}( D_{.,j}$ $h^{(t)2}_j) = \sum_{t=1}^{T}(x^{(t)} h^{(t)}_{j} - (\sum_{i \neq j}D_{.,i}$ $h^{(t)}_i$ $h^{t}_{j} )$  $) $\\  \vspace{0.2cm}
+  $  \sum_{t=1}^{T}( D_{.,j}$ $\alpha^{(t)2}_j) = \sum_{t=1}^{T}(x^{(t)} \alpha^{(t)}_{j} - (\sum_{i \neq j}D_{.,i}$ $\alpha^{(t)}_i$ $\alpha^{t}_{j} )$  $) $\\  \vspace{0.2cm}
   
-  $ D_{.,j}  \sum_{t=1}^{T} h^{(t)2}_j = \sum_{t=1}^{T}(x^{(t)} h^{(t)}_{j} - (\sum_{i \neq j}D_{.,i}$ $h^{(t)}_i$ $h^{t}_{j} )$  $) $\\ \vspace{0.2cm}
+  $ D_{.,j}  \sum_{t=1}^{T} \alpha^{(t)2}_j = \sum_{t=1}^{T}(x^{(t)} \alpha^{(t)}_{j} - (\sum_{i \neq j}D_{.,i}$ $\alpha^{(t)}_i$ $\alpha^{t}_{j} )$  $) $\\ \vspace{0.2cm}
   
-$ D_{.,j}  =\frac{1}{ \sum_{t=1}^{T} h^{(t)2}_j} \sum_{t=1}^{T}(x^{(t)} h^{(t)}_{j} - (\sum_{i \neq j}D_{.,i}$ $h^{(t)}_i$ $h^{t}_{j} )$  $) $\\ \vspace{0.2cm}
+$ D_{.,j}  =\frac{1}{ \sum_{t=1}^{T} \alpha^{(t)2}_j} \sum_{t=1}^{T}(x^{(t)} \alpha^{(t)}_{j} - (\sum_{i \neq j}D_{.,i}$ $\alpha^{(t)}_i$ $\alpha^{t}_{j} )$  $) $\\ \vspace{0.2cm}
 
-$ D_{.,j}  =\underbrace{\frac{1}{ \sum_{t=1}^{T} h^{(t)2}_j}}_{A_{j, j}} \underbrace{\sum_{t=1}^{T}(x^{(t)} h^{(t)}_{j})}_{B_{., j}}  - \sum_{i \neq j}D_{., i}($ $\underbrace{\sum_{t=1}^{T} h^{(t)}_i h^{t}_{j} ) }_{A_{i,j}}$\\ \vspace{0.2cm}
+$ D_{.,j}  =\underbrace{\frac{1}{ \sum_{t=1}^{T} \alpha^{(t)2}_j}}_{A_{j, j}} \underbrace{\sum_{t=1}^{T}(x^{(t)} \alpha^{(t)}_{j})}_{B_{., j}}  - \sum_{i \neq j}D_{., i}($ $\underbrace{\sum_{t=1}^{T} \alpha^{(t)}_i \alpha^{t}_{j} ) }_{A_{i,j}}$\\ \vspace{0.2cm}
 $D_{., j} = \frac{1}{A_{j, j}}(B_{., j} - D A_{., j} + D_{., j}A_{j, j})$
 \end{center}  
 \begin{lstlisting}[language=Python,frame=single]
@@ -199,12 +199,12 @@ For large datasets we want to update D after  visiting each $x^{(t)}$. The solut
  \item[$\bullet$]  Perform inference of $h(x^{(t)})$ after visiting each $x^{(t)}$
  \item[$\bullet$]  Update running averages of the quantities required to update D: 
         \begin{itemize}
-         \item B = $\beta B + (1 - \beta) x^{(t)}h(x^{(t)})^T$
-         \item A = $\beta A + (1 - \beta)h(x^{(t)}) h(x^{(t)})^T$
+         \item B = $\beta B + (1 - \beta) x^{(t)}\alpha(x^{(t)})^T$
+         \item A = $\beta A + (1 - \beta)h(x^{(t)}) \alpha(x^{(t)})^T$
         \end{itemize}
 \item[$\bullet$] Use current value of D as " warm start" to block-coordinate descent (warm start $\iff$ With the previous value of D)
 \end{itemize}
-( We have to specifie $\beta$ like a learning rate $\alpha$ in the gradient descent)
+( We have to specifie $\beta$ like a learning rate $\alpha$ (NB: this $\alpha$ isn't sparse matrix, it's a learning rate coefficient) in the gradient descent)
 
 \begin{lstlisting}[language=Python,frame=single]
 Initialize D # Not to 0 ! (To respect the constraint we define before)
