@@ -434,13 +434,13 @@ The idea is to extend proposed method in  section \ref{sec:Clustering} by adding
 \end{center}
 For example we can take $\mathcal{Q}(D_i,D_j) = \|D^T_iD_j\|^2_F $ with F denotes Frobenius norm.
 
-\subsection{Supervised Dictionary learning}
+\subsection{Supervised Dictionary learning SDL}
 \subsubsection{Problem formulation}
-In \cite{mairal:inria-00322431} the signal may belong to any of $p$ diffrent classes and they model the signal using a single shared D. The create a set of $p$ decision functions $g_i(x,\alpha,\theta)$ (i = 1,...,p). Where: \\
+In \cite{mairal:inria-00322431} the signal may belong to any of $p$ diffrent classes and they model the signal using a single shared D. They create a set of $p$ decision functions $g_i(x,\alpha,\theta)$ (i = 1,...,p). Where: \\
 \begin{center}
   $g_i(x,\alpha,\theta) =     \left\{
                 \begin{array}{ll}
-                 gi > 0 $ if $x \in $class i $\\
+                 gi > 0 $ if $x \in $ class i $\\
                 g_i \leq 0$ otherwise$\\
                 \end{array}
               \right.$
@@ -482,7 +482,7 @@ But this more difficult to solve, thus they adopt a mixed formulation with SDL-G
 \begin{center}
    $\underset{D,\theta}{\min}(\sum_{i=1}^p \sum_{j \in T_i} \mu \mathcal{C}_i(\{ S^*_l(x_j,D,\theta)\}^{p}_{l=1}) + (1-\mu)S^*_i(x_j,D,\theta))+ \lambda_2 \|\theta\|^2_2$
 \end{center}
-They refer to this model as SDL-D (Supervised Dictionary Learning - Discriminative). With $\mu$ which control the trade-ff between reconstruction and discrimination.
+They refer to this model as SDL-D (Supervised Dictionary Learning - Discriminative). With $\mu$ which control the trade-off between reconstruction and discrimination.
 
 \subsubsection{Optimization  procedure}
 \paragraph{SDL-G}
@@ -494,6 +494,42 @@ When $\mu = 0$ or directly SDL-G have the same properties than classical diction
  % SDL-D.png: 532x215 px, 96dpi, 14.07x5.69 cm, bb=0 0 399 161
  \caption{SDL: Supervised dictionary learning Algorithm  \cite{mairal:inria-00322431}}
 \end{figure}
+
+
+\subsection{Supervised Dictionary learning LC-KSVD}
+\cite{6516503} propose a supervised learning algorithm to learn a compact and discriminative dictionary for sparse coding using a new label consistency constraint ( "discriminative sparse-code error") and combined reconstruction error and classification error to form a unified objective function which can be solved with K-SVD algorithm.
+\subsubsection{Dictionary Learning for classification}
+A good classifier $f(x)$ can be obtained by determining its model parameters $W \in R^{m \times K} $ satisfying:
+\begin{center}
+ $W = \underset{W}{\argmin} \underset{i}{\sum}\mathcal{L}\{h_i,f(x_i,W)\} + \lambda_1 \|W\|^2_F$
+\end{center}
+where: $m$ is the number of classes, $\mathcal{L}$ is the classification loss function (typically logistic loss function, suqare hinge loss, simple quadratic loss function), $h_i$ the label of $y_i$ and $\lambda_1$ a regularization parameters (which prevents overfitting).\\
+The objective function for learning $D$ and $W$ jointly can be :
+\begin{center}
+ $<D,W,\alpha> = \underset{D,W,\alpha}{\argmin} \|X -D\alpha\|^2_2 + \underset{i}{\sum}\mathcal{L}\{h_i,f(\alpha_i,W)\} + \lambda_1 \|W\|^2_F$  s.t.  $\forall i, \|\alpha_i\|_0 \leq T$ 
+\end{center}
+
+The sparse code $\alpha_i$ can be used as a feature descriptor of input signal $x_i$, then the risk minimization formulation can be written as:
+\begin{center}
+ $<D,W> = \underset{D,W}{\argmin}\underset{i}{\sum}\mathcal{L}\{h_i,f(\alpha^*(x_i,D),W)\} + \frac{\nu_1}{2}\|W\|^2_F$
+\end{center}
+Here D is not explicitly defined in the function but implicitlu in the sparse coding step ($\alpha^*(x_i,D)$ )
+
+\subsubsection{Label Consistent K-SVD (LC-KSVD)}
+\cite{6516503} add a mabem consistency regularization term and a joint classification error and label consistency regularization term into the objective function :
+\begin{center}
+ $<D,\alpha> = \underset{D,\alpha}{\argmin} \|X - D\alpha\|^2_2$ s.t. $ \forall i, \|\alpha_i\|_0 \leq T$
+\end{center}
+They refer to this two problem as LC-KSVD1 and LC-KSVD2 respectivly.
+
+\subsubsection{LC-KSVD1}
+The objective function for dictionary construction is  defined as
+\begin{center}
+ $<D,A,\alpha> = \underset{D,A,\alpha}{\argmin} \| X - D\alpha \|^2_2 + \mu \|Q -A\alpha\|^2_2$  s.t. $\forall i, \|\alpha_i\|_0 \leq T$
+\end{center}
+
+Where $\mu$ constrols the contribution between reconstruction and label consistency regularization. $Q = [q_1,...,q_N] \in \R^{K \times N}$ are the "discriminative" sparse codes of input signal X for classification.
+\subsubsection{LC-KSVD2}
 
 
 \newpage 
