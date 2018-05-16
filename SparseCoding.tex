@@ -49,7 +49,7 @@ Little document to summarize state-of-the-art sparse coding and dictionary learn
 Sparse coding is one of the neural networks used for unsupervised learning  (like restricted boltzmann machines and autoencoders).\\
 The idea behind sparse coding is: For each $x^{t}$ find a latent representation $\alpha^{t}$ such that:
 \begin{itemize}
- \item[$\bullet$] It is sparese: the vector $\alpha^{t}$ has many zeros (only few nonzero elements)
+ \item[$\bullet$] It is sparse: the vector $\alpha^{t}$ has many zeros (only few nonzero elements)
  \item[$\bullet$] We can reconstruct the original input $x^{(t)}$ as well as possible.
 \end{itemize}
 That mean, more formally:\\
@@ -258,7 +258,7 @@ SPAMS (SPArse Modeling Software) is an optimization toolbox for solving various 
  \item Solving structured sparse decomposition problems (l1/l2, l1/linf, sparse group lasso, tree-structured regularization, structured sparsity with overlapping groups,...).
 \end{itemize}
 It is developed and maintained by Julien Mairal (Inria), and contains sparse estimation methods resulting from collaborations with various people: notably, Francis Bach, Jean Ponce, Guillermo Sapiro, Rodolphe Jenatton and Guillaume Obozinski.\\
-You can find my code from Sparse Coding method on MNIST using SPAMS toolbox on my github \texttt{test\_spams.py}.\\
+You can find my code of Sparse Coding/Dictionary Learning on MNIST using SPAMS toolbox on my github \texttt{test\_spams.py}.\\
 \newpage
 \paragraph{Test 1}
 In the first test I used 256 atoms, 2 000 iterations and $\lambda$ = 0.015 to learn the dictionary and the sparse coefficients. 
@@ -529,9 +529,9 @@ The objective function for dictionary construction is  defined as
 \end{center}
 
 Where $\mu$ constrols the contribution between reconstruction and label consistency regularization. $Q = [q_1,...,q_N] \in \R^{K \times N}$ are the "discriminative" sparse codes of input signal X for classification.
-\subsubsection{LC-KSVD2}
 
-
+In our case we don't want to train the classifier, we only want to find new features. This is why we only apply LC-KSVD1.\\
+You can find my code LC-KSVD1 method on MNIST on my github \texttt{LC-KSVD.py}
 \newpage 
 \section{Convolutional Sparse Coding}
 Notations:
@@ -646,6 +646,32 @@ Convergence may be reach if $\mu^{(i)} \rightarrow \infty$:
                 \end{array}
               \right.$
 \end{center}
+
+\subsection{SPORCO}
+SPORCO (SParse Optimization Research COde) is a Python package for solving optimization problem with sparsity problem. These conssit primarily of sparse coding and dictionary learning problems but there is also support for other problems suchs as Convolutional sparse coding \cite{wohlberg-2017-sporco, wohlberg-2016-sporco}
+
+You can find my code of Convolutional Sparse Coding/Dictionary learning on MNIST using SPORCO toolbox on my github \texttt{CSC.py}.\\
+
+\newpage
+\subsection{Application on random images}
+\begin{figure}[h]
+ \centering
+ \includegraphics[scale=0.6]{Results/SPORCO_test_img/Figure_2.png}
+ % Figure_2.png: 663x630 px, 100dpi, 16.84x16.00 cm, bb=0 0 477 454
+ \caption{Dictionary learned with 6 random images}
+\end{figure}
+\begin{figure}[h]
+ \centering
+ \includegraphics[scale=0.45]{Results/SPORCO_test_img/activations.png}
+ % activations.png: 663x630 px, 100dpi, 16.84x16.00 cm, bb=0 0 477 454
+ \caption{Activation}
+\end{figure}
+\begin{figure}[h]
+ \centering
+ \includegraphics[scale=0.4]{Results/SPORCO_test_img/recons.png}
+ % recons.png: 795x384 px, 72dpi, 28.05x13.55 cm, bb=0 0 795 384
+ \caption{Original image vs Reconstructed one}
+\end{figure}
 
 %====================PART 2 SPARSE CODING FOR SR=========
 \newpage
