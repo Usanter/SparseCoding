@@ -2,9 +2,12 @@ import spams
 import numpy as np
 import math
 import sys
+#import matplotlib.pyplot as plt
 
 # Dataset
 from tensorflow.examples.tutorials.mnist import input_data
+# Classifier
+from sklearn.cluster import KMeans
 
 
 def create_Q(labels, nb_class, k,n):
@@ -42,15 +45,15 @@ def LC_KSVD(X, Q, lambda1,m, k=1024):
     I = np.identity(k) 
 
     A_0 = Q * np.transpose(h_0) * np.linalg.inv(h_0 * np.transpose(h_0) + lambda2 * I)
-
+    print(np.shape(A_0))
     print("Initial step..............Done") 
 
     # Init Ynew and Dnew
     
 
-    Ynew =(np.concatenate([X,math.sqrt(lambda1)*Q]))
-    Dnew = (np.concatenate([D_0,math.sqrt(lambda1)*A_0]))
-    print("Shape Dnew ",np.shape(Dnew))
+    Ynew =(np.concatenate([X,math.sqrt(5)*Q]))
+    Dnew = (np.concatenate([D_0,math.sqrt(5)*A_0]))
+   
     print("Creation Ynew,Dnew........Done")
     
     # Use K-SVD algorithm 
@@ -61,9 +64,12 @@ def LC_KSVD(X, Q, lambda1,m, k=1024):
    
     print("KSVD......................Done")
 
-    # Extract (D and A) and Normalize them 
+    # Extract (D and A) and Normalize them
+    print(np.shape(D))
     D_ext = D[:m] 
-    A_ext = D[:n]
+    print(np.shape(D_ext))
+    A_ext = D[m:]
+    print(np.shape(D_ext))
     
     Dt = np.transpose(D_ext)
     At = np.transpose(A_ext)
@@ -85,8 +91,8 @@ k = 1024
 # Load dataset
 
 mnist = input_data.read_data_sets('MNIST_DATA',one_hot=True)
-digits = mnist.train.images[:2000]
-digits_labels = mnist.train.labels[:2000]
+digits = mnist.train.images
+digits_labels = mnist.train.labels
 
 # Preprocessing
 
@@ -98,11 +104,27 @@ X = np.asfortranarray(X,dtype=float)
 lambda1 = 1.2/math.sqrt(m)
 
 # Define Q
-#Q = np.ones((k,n))
-#labels = np.array([[1,0,0],[1,0,0],[0,1,0],[0,1,0],[0,0,1],[0,0,1]])
+#Q = np.ones((k,n))  # Test 1
+#labels = np.array([[1,0,0],[1,0,0],[0,1,0],[0,1,0],[0,0,1],[0,0,1]]) # Test 2
 Q = create_Q(digits_labels,len(digits_labels[0]),k,n)
 [D,A,h] = LC_KSVD(X,Q,lambda1,m,k)
 
 
+# Save D, A and h
+fileD = open('D_LC-KSVD.mat','wb')
+fileH = open('h_LC-KSVD.mat','wb')
+fileA = open('A_LC-KSVD.mat','wb')
+np.save(fileD,D)
+np.save(fileH,h.todense())
+np.save(fileA,A)
 
-# Classifier 
+print("Save files...............Done")
+
+# Classifier
+#test = A * h
+#test = np.transpose(test)
+#kmean1024 = KMeans(init='k-means++', n_clusters=10, n_init=10)
+#pred_1024 = kmean1024.fit_predict(test)
+#plt.hist(pred_1024)
+
+#print("Kmeans...................Done")
