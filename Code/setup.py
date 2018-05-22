@@ -39,6 +39,15 @@ except ImportError:
     print('spams is required during installation')
     sys.exit(1)
 
+
+try:
+    import sporco
+    print('Successfully import sporco')
+except ImportError:
+    print('sporco is required during installation')
+    sys.exit(1)
+
+
 local_path = os.path.dirname(os.path.abspath(sys.argv[0]))
 
 os.chdir(local_path)
@@ -47,9 +56,9 @@ sys.path.insert(0, local_path)
 
 setup(name='DL-SF',
       version='0.0.1',
-      description='A library for dictionary learning for extract new features in speech',
+      description='A library for dictionary learning for extract new features in speech for speech recognition',
       long_description='A library for extract new features in speech '
-                       'in an unsupervised, weekly supervised  and supervised scenario. ',
+                       'in an unsupervised, weekly supervised  and supervised scenario for speech recognition ',
       url='https://github.com/Usanter/SparseCoding',
       author='Thomas Rolland',
       author_email='thomas.rolland@irit.fr',

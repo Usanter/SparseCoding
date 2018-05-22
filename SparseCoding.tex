@@ -377,8 +377,8 @@ w\begin{figure}[h]
 \newpage
 \subsection{Dictionary learning and sparse coding for unsupervised clustering}
 \label{sec:Clustering}
-Whereas the previous tests seems have good result, one question appears: \\ \textit{What make us confident about the fact that  two close images (two handwitten 3 for example) have close coefficients representation h ?}\\
-Sprechmann and Sapiro \cite{5494985} propose an algorithm to cluster datasets that are well represented in the sparse modeling framework with a set of K learned dictionaries. The main idea is, given a set of K dictionaries, find for each signals the dictionary for which the "best" sparse decomposition is obtainedn, with :
+Whereas the previous tests seem to have a good result, one question appears \\ \textit{What makes us confident about the fact that two close images (two handwritten 3 for example) have close coefficients representation h ?}\\
+Sprechmann and Sapiro \cite{5494985} propose an algorithm to cluster datasets that are well represented in the sparse modelling framework with a set of K learned dictionaries. The main idea is, given a set of K dictionaries, find for each signal in the dictionary for which the "best" sparse decomposition is obtained, with :
 
 \begin{center}
 $\underset{D_i,C_i}{\min} \sum_{i=1}^{K} \sum_{x_j \in C_i} \mathcal{R}(x_j, D_i)$
@@ -387,7 +387,7 @@ $\underset{D_i,C_i}{\min} \sum_{i=1}^{K} \sum_{x_j \in C_i} \mathcal{R}(x_j, D_i
 Here $D_i \in \R^{n \times k_i}$ is the $k_i$ dictionary associated with the class $C_i$. $x_j \in \R^n$ are the input data and $\mathcal{R}$  a function that mesure how good the sparse decomposition is for the signal $x_j$ under the dictionary $D_i$. Sprechmann and Sapiro propose to use the cost function in the Lasso-type problem as $\mathcal{R}$ the measure of performance, $\mathcal{R}(x,D) = \|x - D\alpha\|^2_2 + \lambda \|\alpha\|_1$. The class $\mathcal{C}$ for a given signal x is found by solving $\mathcal{C}= \underset{j=1,..,K}{\argmin}$ $ \mathcal{R}(x,Dj) $.
 
 \subsubsection{Dictionary learning for clustering}
-Given a set of signals and the number of class, we want to find a set of K learned dictionaries that best represent x (the input data). \cite{5494985} formulate tgus as an energy minimization problemand use the measure previouly proposed,\\
+Given a set of signals and number of classes, we want to find a set of K learned dictionaries that best represent x (the input data). \cite{5494985} formulate thus as an energy minimization problem and use the measure previously proposed,\\
 \begin{center}
  $\underset{D_i,C_i}{\min} \sum_{i=1}^{K} \sum_{x_j \in C_i} \underset{\alpha_{ij}}{\min}\|x_j - D_i \alpha_{ij}\|^2_2 + \lambda\|\alpha_{ij}\|_1$
 \end{center}
@@ -400,7 +400,7 @@ One drawback of this algorithm is there is no guarantee of reach a global minimu
 
 \subsubsection{Initialization}
 The initialization can be given by a set of K dictionaries or as an initial partition of the data.\\
-The main idea is to construct a similarity matrix and use it as the input for  a spectral clustering algorithm. Let define $A = [\alpha_1,....,  \alpha_m]$ with $\alpha_j$ the sparse representation of each signal $x_j$. To obtain a good classification, we expect two signal to the same cluster to have decomposition that use similar atoms. Thus we can compute two similarity matrix:
+The main idea is to construct a similarity matrix and use it as the input for a spectral clustering algorithm. Let define $A = [\alpha_1,....,  \alpha_m]$ with $\alpha_j$ the sparse representation of each signal $x_j$. To obtain a good classification, we expect two signal to the same cluster to have decomposition that uses similar atoms. Thus we can compute two similarity matrix:
 \begin{itemize}
  \item \textit{Clustering the signals :} Construct a similarity matrix $S_1 \in \R^{m \times m}$ which measure the similarity of two signals by comparing the corresponding sparse representation:\\
  $S_1 = |A|^T |A|$
@@ -497,7 +497,7 @@ When $\mu = 0$ or directly SDL-G have the same properties than classical diction
 
 
 \subsection{Supervised Dictionary learning LC-KSVD}
-\cite{6516503} propose a supervised learning algorithm to learn a compact and discriminative dictionary for sparse coding using a new label consistency constraint ( "discriminative sparse-code error") and combined reconstruction error and classification error to form a unified objective function which can be solved with K-SVD algorithm.
+\cite{6516503} propose a supervised learning algorithm to learn a compact and discriminative dictionary for sparse coding using a new label consistency constraint ( ``discriminative sparse-code error") and combined reconstruction error and classification error to form a unified objective function which can be solved with the K-SVD algorithm.
 \subsubsection{Dictionary Learning for classification}
 A good classifier $f(x)$ can be obtained by determining its model parameters $W \in R^{m \times K} $ satisfying:
 \begin{center}
@@ -528,13 +528,65 @@ The objective function for dictionary construction is  defined as
  $<D,A,\alpha> = \underset{D,A,\alpha}{\argmin} \| X - D\alpha \|^2_2 + \mu \|Q -A\alpha\|^2_2$  s.t. $\forall i, \|\alpha_i\|_0 \leq T$
 \end{center}
 
-Where $\mu$ constrols the contribution between reconstruction and label consistency regularization. $Q = [q_1,...,q_N] \in \R^{K \times N}$ are the "discriminative" sparse codes of input signal X for classification.
+Where $\mu$ constrols the contribution between reconstruction and label consistency regularization. $Q = [q_1,...,q_N] \in \R^{K \times N}$ are the "discriminative" sparse codes of input signal X for classification.\\
+Q is a discriminative sparse code corresponding to an input signal and the dictionary atoms, the nonzero values occur when $signal_i$ and $atom_i$ share the same label.
+\begin{figure}[h]
+ \centering
+ \includegraphics[scale=1]{Documentations/Q_explications.png}
+ % Q_explications.png: 487x177 px, 96dpi, 12.88x4.68 cm, bb=0 0 365 133
+ \caption{Example of Q, each color correspond to a class (white color  is the lack of classes)}
+\end{figure}
+To use K-SVD algorithm we can rewritte our previous equation:
+\begin{center}
+$ <D,A,\alpha> = \underset{D,A,\alpha}{\argmin} \| \begin{pmatrix} 
+X  \\
+\sqrt{\mu}Q
+\end{pmatrix} -  \begin{pmatrix} 
+D  \\
+\sqrt{\mu}A
+\end{pmatrix}\alpha \|^2_2 $  \\ \vspace{0.5cm} s.t. $\forall i, \|\alpha_i\|_0 \leq T $
+\end{center}
+We define $X_{new}  =  \begin{pmatrix} 
+X  \\
+\sqrt{\mu}Q
+\end{pmatrix}$ and $D_{new} =  \begin{pmatrix} 
+D  \\
+\sqrt{\mu}A
+\end{pmatrix}$. The matrix $D_{new}$ is $L_2$ normalized.We can solve our minimization problem using K-SVD algorithm on:
+\begin{center}
+ $<D,A,\alpha> = \underset{D,A,\alpha}{\argmin} \| X_{new} - D_{new}\alpha \|^2_2$ \\  \vspace{0.5cm}s.t. $\forall i, \|\alpha_i\|_0 \leq T$
+\end{center}
+But  we cannot use D and A  directly after employing K-SVD algorithm because D and A are $L_2$ normalized in $D_{new}$. The desired $\hat{D} and \hat{A}$ can be compute as follow:\vspace{0.5cm}\begin{center}
+$\hat{D} = (
+\frac{d_1}{\|d1\|_2}  ...  \frac{d_K}{\|d_K\|_2} 
+)$   and $\hat{A} =
+(\frac{a_1}{\|d_1\|_2}  ...  \frac{a_K}{\|d_K\|_2} 
+)$
+\end{center}
 
+\vspace{0.5cm}
+\begin{lstlisting}[language=Python,frame=single]
+Input: X, Q, lambda1, K
+Output: D, A
+===========================================================================
+D_0 = K-SVD(X,lambda1)
+A_0 = Q * tranpose(X) * inv(X*tranpose(X) + lamba2 * Id)
+h_0 = omp(Dnew,Xnew,lambda1)
+
+Initialize Xnew and Dnew
+D = K-SVD(Dnew,Xnew,lambda1)
+
+Extract D, A
+return D, A
+\end{lstlisting}
+\vspace{0.5cm}
+With $A_0 = Q X^T (XX^T + \lambda_2 I)^{-1}$
+\vspace{0.5cm}\\
 In our case we don't want to train the classifier, we only want to find new features. This is why we only apply LC-KSVD1.\\
-You can find my code LC-KSVD1 method on MNIST on my github \texttt{LC-KSVD.py}
+You can find my Python code of  LC-KSVD1 on MNIST in my Github repository: \texttt{LC-KSVD.py}
 \newpage
 
-\section{Application pour MNIST}
+\subsection{Application on MNIST}
 For k = 1024 and $\mu = 5$:
 
 \begin{figure}[h]
@@ -580,8 +632,17 @@ For k = 1024 and $\mu = 5$:
  % confusion_matrix_test.png: 640x480 px, 100dpi, 16.26x12.19 cm, bb=0 0 461 346
  \caption{Kmeans classification on A$\alpha$ from the test dataset}
 \end{figure}
-
-
+\newpage
+\subsection{Application on ``voyelle'' dataset }
+Here we focus our research on 2 rows vector dataset. There are 10 classes which correspond to 10 vowels.\newline
+\begin{figure}[h]
+ \centering
+ \includegraphics[scale=1]{Results/voyelle_2.png}
+ % voyelle_2.png: 445x648 px, 100dpi, 11.30x16.46 cm, bb=0 0 320 467
+ \caption{Kmean classification on A$\alpha$ from the train dataset}
+\end{figure}
+ \\
+\textit{Note: Here there is bad cluster identification (this is why we don't have a perfect diagonal matrix), however, the result is the same: In this case, our method is bad for classification because on the same row or column there is sometimes a bad repartition. It's due to the length of our input vector (2 rows vector), which is not enough to get the good result for classification using this method.}
 \newpage 
 \section{Convolutional Sparse Coding}
 Notations:
@@ -723,6 +784,9 @@ You can find my code of Convolutional Sparse Coding/Dictionary learning on MNIST
  \caption{Original image vs Reconstructed one}
 \end{figure}
 
+\newpage
+\section{Supervised Convolutional Sparse Coding}
+TODO
 %====================PART 2 SPARSE CODING FOR SR=========
 \newpage
 \section{Sparse Coding for speech recognition}

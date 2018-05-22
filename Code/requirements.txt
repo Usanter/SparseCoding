@@ -1,5 +1,6 @@
 numpy
 tensorflow
 spams
+sporco
 scipy
 matplotlib

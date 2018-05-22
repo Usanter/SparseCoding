@@ -15,13 +15,24 @@ from sklearn import datasets
 #======================MISC FUNCTIONS============================================
 # Function which compute the "convergence" about 2 matrix
 def Convergence(Matrix_before,Matrix_after):
+    '''
+    Check how close are the 2 input matrix
+    :param Matrix_before: Input Matrix 1
+    :param Matrix_after: Input Matrix 2
+    :return: True if they are close, false otherwise
+    '''
     #sys.stdout.write("\rOpti D " +str(np.sum(abs(Matrix_before - Matrix_after))))
     #sys.stdout.flush()
     return np.sum(abs(Matrix_before - Matrix_after)) > 0.1
 
 # Function which help to avoid the non-division by 0 in the h's gradient descent
 def shrink(h,coef):
-
+    '''
+    Function to shrink the input by a coef, use to help to avoid the non-division by 0 in the gradient descent
+    :param h: Input Matrix
+    :param coef: Coef use to shrink
+    :return: shrinked h
+    '''
     result = np.array([])
 
     # for all elements sign(hi) * max( |hi| - coef, 0)
@@ -33,6 +44,16 @@ def shrink(h,coef):
 
 # Function for h gradient descent
 def ISTA(h,D,x,k,alpha = 0.09,lambda_coef = 0.05):
+    '''
+    ISA function, gradient descent + shrinkage function
+    :param h: Sparse coefficients matrix
+    :param D: Dictionary
+    :param x: Input data
+    :param k: Number of D's atoms
+    :param alpha: by default 0.09
+    :param lambda_coef: by default 0.05
+    :return: return h, sparse coefficients matrix
+    '''
     #lambda_coef = 500
     lambda_coef = 1.2/math.sqrt(len(x)) # Cf Online Dictionary learning for Sparse Coding Doc
     not_converged = True
@@ -59,6 +80,14 @@ def ISTA(h,D,x,k,alpha = 0.09,lambda_coef = 0.05):
 
 # Compute current cost
 def compute_cost(x,D,h,lambda_coef = 0.2):
+    '''
+    Compute cost function with a fixed D, h and X
+    :param x: Input data
+    :param D: Dictionary
+    :param h: Sparse Coef
+    :param lambda_coef: by default 0.2
+    :return: Cost
+    '''
 
         [_,n] = np.shape(x)
         return (1/n)* ( (1/2)*np.linalg.norm(x - D.dot(h))**2 + lambda_coef*np.linalg.norm((h),ord=1))
@@ -127,6 +156,13 @@ def compute_cost(x,D,h,lambda_coef = 0.2):
 
 # Sparse coding using Block-coordinate descent algorithm
 def sparse_coding(x,k = 128):
+    '''
+    Compute the Dictionary Learning and Sparse coding method to find a Dictionary of atoms and
+    sparse coefs to reconstruct the input data x
+    :param x: Input data
+    :param k: Number of D's atoms
+    :return: Optimal Dictionary and Sparse Coef for a given input data X
+    '''
 
     #Init
     not_converged =  True
