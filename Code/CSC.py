@@ -74,7 +74,7 @@ opt = cbpdn.ConvBPDN.Options({'Verbose': True, 'MaxMainIter': 200,
 b = cbpdn.ConvBPDN(D1, sh, lmbda, opt, dimK=0)
 X = b.solve()
 print("ConvBPDN solve time: %.2fs" % b.timer.elapsed('solve'))
-
+print("[SHAPE]",np.shape(X))
 
 # reconstruct image from sparse representation
 shr = b.reconstruct().squeeze()

@@ -29,7 +29,7 @@
 \maketitle
 
 \begin{abstract}
-Little document to summarize state-of-the-art sparse coding and dictionary learning for weekly supervised  and unsupervised  feature extraction in speech. Introduction to 1.2 are  based on the Hugo Larochelle courses.\\
+Little document to summarize state-of-the-art sparse coding and dictionary learning for weekly supervised and unsupervised feature extraction in speech. Introduction to 1.2 is based on the Hugo Larochelle courses.\\
 \begin{center}
 
 \textbf{This document is a draft }
@@ -42,11 +42,11 @@ Little document to summarize state-of-the-art sparse coding and dictionary learn
 %La Representation learning ou feature learning sont des méthodes qui permettent à un système
 \section{Sparse coding}
 \subsection{Introduction}
-\paragraph{Idea} Sparse dictionary learning is a representation learning method which aims at finding a sparse representation of the input data (in form of a linear combination of basic elements (called Atoms). The idea of using learned dictionary instead of a predefined one is based on wavelets. The sparse learned models has recently led to state-of-the-art result for denoising, classification,...
+\paragraph{Idea} Sparse dictionary learning is a representation learning method which aims at finding a sparse representation of the input data (in form of a linear combination of basic elements (called Atoms). The idea of using a learned dictionary instead of a predefined one is based on wavelets. The sparse learned models has recently led to state-of-the-art result for denoising, classification,...
 %UNSPERVISED LEARNING=========================================================+
 \paragraph{Unsupervised learning} Only use the inputs $x^{(t)}$ ( $X = [x_1,....,x_n]$ in $\R^{m \times n}$) for learning. Automatically extract meaningful features of our data, leverage the availability of unlabeled data and add a data-dependent regularize to trainings.\\
 
-Sparse coding is one of the neural networks used for unsupervised learning  (like restricted boltzmann machines and autoencoders).\\
+Sparse coding is one of the methods used for unsupervised learning  (like restricted Boltzmann machines and autoencoders).\\
 The idea behind sparse coding is: For each $x^{t}$ find a latent representation $\alpha^{t}$ such that:
 \begin{itemize}
  \item[$\bullet$] It is sparse: the vector $\alpha^{t}$ has many zeros (only few nonzero elements)
@@ -104,7 +104,7 @@ The images refer to $D.,_k$ (columns of D wich are not equals to 0) and the fact
 
 In general we have $k<<n$ . But we can use an overcomplete dictionary with $k > m$.
 \subsection{Inderence of Sparse code}
-The orginal problem is a combinatorial problem (proven to be NP-hard). To solve this problem we use relaxation methods (then we can smooth the $L_0$ and use continious optimization techniques) or greedy methos (then build the solution one non-zero element at time).
+The original problem is a combinatorial problem (proven to be NP-hard). To solve this problem we use relaxation methods (then we can smooth the $L_0$ and use continuous optimization techniques) or greedy methods (then build the solution one non-zero element at time).
 \subsubsection{Compute $\alpha$ }
 %Inderence of sparse code=============================================
 \paragraph{Idea}
@@ -113,7 +113,7 @@ Assume we are given a dictionary matrix D, how do we compute $h(x^{(t)})$. We ha
 \begin{center}  Basic Pursuit:
 $l(x^{(t)}) = \frac{1}{2} \| x^{t}- D \alpha^{(t)} \|^{2}_{2} + \lambda \|\alpha^{(t)}\|_1 w.r.t. \alpha^{(t)}$\\ 
 \end{center} 
-Here we used relaxation method to switch from norm $l_0$ to $l_1$ know as the  Basic Pursuit (vs Matching Pursuit,a greedy method,  if we keep $l_0$ norm and find one atom at a time).\\
+Here we used relaxation method to switch from norm $l_0$ to $l_1$ know as the  Basic Pursuit (vs Matching Pursuit, a greedy method,  if we keep $l_0$ norm and find one atom at a time).\\
 We could use a gradient descent method to solve this minimization:\\
 \begin{center}
 $\Delta_{\alpha^{(t)}} l(x^{(t)}) = D^T (D \alpha^{(t)} - x^{(t)}) + \lambda sign(\alpha^{(t)})$
@@ -239,7 +239,7 @@ Then $\beta = \frac{\theta + 1 - \eta}{\theta +1}$, where $\theta = t \eta$ if $
 
 
 \subsection{Application for MNIST dataset}
-The MNIST database of handwritten digits, available from Yann Lecun's website. MNIST has a training set of 60,000 examples, and a test set of 10,000 examples. It is a subset of a larger set available from NIST. The digits have been size-normalized and centered in a fixed-size image. In my test I'll use 55000 examples from the training set (using Tensorflow datasets). These are $28 \times 28$ images. One way to evaluate the quality of our results is to comparing the original data vs the reconstructed ones. 
+The MNIST database of handwritten digits, available from Yann Lecun's website. MNIST has a training set of 60,000 examples and a test set of 10,000 examples. It is a subset of a larger set available from NIST. The digits have been size-normalized and centred in a fixed-size image. In my test, I'll use 55000 examples from the training set (using Tensorflow datasets). These are $28 \times 28$ images. One way to evaluate the quality of our results is to compare the original data vs the reconstructed ones. 
 \begin{figure}[h]
  \centering
  \includegraphics[scale=0.5]{MnistExamples.png}
@@ -247,8 +247,8 @@ The MNIST database of handwritten digits, available from Yann Lecun's website. M
  \caption{Example of MNIST's handwitten digits}
 \end{figure}
 \subsubsection{Prototype}
-My first task is to realise a Sparse Coding prototype to compute Sparse Coding on this dataset, using Python. The aim here, is to understand the underlying principles of this method, you can found this prototype in \texttt{Code directory} of this repository as \texttt{SparseCoding.py}. \\
-These are some results of this prototype: For time saving I used only 100 digits as input.
+My first task is to realise a Sparse Coding prototype to compute Sparse Coding on this dataset, using Python. The aim here is to understand the underlying principles of this method, you can found this prototype in \texttt{Code directory} of this repository as \texttt{SparseCoding.py}. \\
+These are some results of this prototype: For time-saving, I used only 100 digits as input.
 
 \subsubsection{SPAMS}
 SPAMS (SPArse Modeling Software) is an optimization toolbox for solving various sparse estimation problems.
@@ -258,10 +258,10 @@ SPAMS (SPArse Modeling Software) is an optimization toolbox for solving various 
  \item Solving structured sparse decomposition problems (l1/l2, l1/linf, sparse group lasso, tree-structured regularization, structured sparsity with overlapping groups,...).
 \end{itemize}
 It is developed and maintained by Julien Mairal (Inria), and contains sparse estimation methods resulting from collaborations with various people: notably, Francis Bach, Jean Ponce, Guillermo Sapiro, Rodolphe Jenatton and Guillaume Obozinski.\\
-You can find my code of Sparse Coding/Dictionary Learning on MNIST using SPAMS toolbox on my github \texttt{test\_spams.py}.\\
+You can find my code of Sparse Coding/Dictionary Learning on MNIST using SPAMS toolbox on my GitHub \texttt{test\_spams.py}.\\
 \newpage
 \paragraph{Test 1}
-In the first test I used 256 atoms, 2 000 iterations and $\lambda$ = 0.015 to learn the dictionary and the sparse coefficients. 
+In the first test, I used 256 atoms, 2 000 iterations and $\lambda$ = 0.015 to learn the dictionary and the sparse coefficients. 
 w\begin{figure}[h]
  \centering
  \includegraphics[scale=0.82]{Results/SPAMS_X_ALL_K256/D.png}
@@ -630,20 +630,45 @@ For k = 1024 and $\mu = 5$:
  \centering
  \includegraphics[scale=0.72]{Results/LC-KSVD_X_ALL_K_1024/confusion_matrix_test.png}
  % confusion_matrix_test.png: 640x480 px, 100dpi, 16.26x12.19 cm, bb=0 0 461 346
- \caption{Kmeans classification on A$\alpha$ from the test dataset}
+ \caption{Kmeans classification on A $\alpha$ from the test dataset w}
 \end{figure}
 \newpage
 \subsection{Application on ``voyelle'' dataset }
-Here we focus our research on 2 rows vector dataset. There are 10 classes which correspond to 10 vowels.\newline
+We have for our experiments some audio signals that have been recorded in a studio. The speaker pronounces 10 vowels. There are 100 occurrences of each vowel (\textit{aa, ee, eh, eu, ii, oe, oh, oo, uu, yy}). Each signal is of 1024 sample.\\
+A cepstral parametrization has been extracted from these samples, and a PCA has been done to reduce the data's dimension to  2 and 12. \vspace{0.5cm} \\
+First, we focus our research on 2 dimension dataset. There are 10 classes which correspond to 10 vowels.\newline
 \begin{figure}[h]
  \centering
- \includegraphics[scale=1]{Results/voyelle_2.png}
+ \includegraphics[scale=1]{Results/Voyelles/voyelle_2.png}
  % voyelle_2.png: 445x648 px, 100dpi, 11.30x16.46 cm, bb=0 0 320 467
  \caption{Kmean classification on A$\alpha$ from the train dataset}
 \end{figure}
  \\
-\textit{Note: Here there is bad cluster identification (this is why we don't have a perfect diagonal matrix), however, the result is the same: In this case, our method is bad for classification because on the same row or column there is sometimes a bad repartition. It's due to the length of our input vector (2 rows vector), which is not enough to get the good result for classification using this method.}
-\newpage 
+\textit{Note: Here there is bad cluster identification (this is why we don't have a perfect diagonal matrix), however, the result is the same: In this case, our method is bad for classification because on the same row or column there is sometimes a bad repartition. It's due to the length of our input vector (2 dimensional vector), which is not enough to get the good result for classification using this method of Sparse representation of the signal.} \vspace{0.5cm}
+\\ Then we focus our approach on 12 dimension dataset:
+\begin{figure}[h]
+ \centering
+ \includegraphics[scale=0.45]{Results/Voyelles/voyelle_13_train.png}
+ % voyelle_13_train.png: 800x630 px, 100dpi, 20.32x16.00 cm, bb=0 0 576 454
+ \caption{Kmean on data12 train set}
+\end{figure}
+\begin{figure}[h]
+ \centering
+ \includegraphics[scale=0.43]{Results/Voyelles/voyelle_13_test.png}
+ % voyelle_13_test.png: 1366x660 px, 100dpi, 34.70x16.76 cm, bb=0 0 984 475
+ \caption{Kmean on data12 test set}
+\end{figure}
+ 
+TODO Interpretation
+\begin{figure}[h]
+ \centering
+ \includegraphics[scale=0.45]{Results/Voyelles/VoyellesAhRepartition.png}
+ % VoyellesAhRepartition.png: 1366x660 px, 100dpi, 34.70x16.76 cm, bb=0 0 984 475
+ \caption{ Four examples of A$\alpha$ from two different classes (orange and blue : Class 1, red and green: Class 2)}
+\end{figure}
+
+
+\newpage
 \section{Convolutional Sparse Coding}
 Notations:
 \begin{itemize}
@@ -657,7 +682,7 @@ Notations:
  \item Hadamard product: $\otimes$
  \item inverse FFT : $ \mathcal{F}^{-1}$
  \item Mapping function that preserve only $M \ll D$ active values relating to the small spaital structure of the estimated filter : $ \mathcal{M}\{\}$
-\end{itemize}
+\end{itemize} 
 \subsection{Idea}
 There are other algorithms like Efficient Shift-Invariant Dictionary learning which refers to the problem of discovering a set of latent basis vectors that capture informative \textit{local patterns} at different locations of the input sequences and not in all input sequences \cite{Zheng:2016:ESD:2939672.2939824}, to do that, we will use Convolutional Sparse Coding method.  
 \subsection{Problem formulation}
@@ -773,7 +798,7 @@ You can find my code of Convolutional Sparse Coding/Dictionary learning on MNIST
 \end{figure}
 \begin{figure}[h]
  \centering
- \includegraphics[scale=0.45]{Results/SPORCO_test_img/activations.png}
+ \includegraphics[scale=0.455]{Results/SPORCO_test_img/activations.png}
  % activations.png: 663x630 px, 100dpi, 16.84x16.00 cm, bb=0 0 477 454
  \caption{Activation}
 \end{figure}
@@ -783,6 +808,9 @@ You can find my code of Convolutional Sparse Coding/Dictionary learning on MNIST
  % recons.png: 795x384 px, 72dpi, 28.05x13.55 cm, bb=0 0 795 384
  \caption{Original image vs Reconstructed one}
 \end{figure}
+
+\newpage
+\subsection{Application on MNIST}
 
 \newpage
 \section{Supervised Convolutional Sparse Coding}
@@ -798,7 +826,3 @@ We use Sparse Coding algorithm as describe before and we get the dictionary D an
 \bibliography{efficient-sparse-coding-algorithms.bib}
 
 \end{document}
-%KSVD
-%OMP
-% k doit etre deux fois trois plus grand que 8x8
-%sapiro Author 
