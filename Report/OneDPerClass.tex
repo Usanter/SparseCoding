@@ -1,0 +1,6 @@
+\subsection{One dictionary per class}
+The idea is to extend proposed method in  section \ref{sec:Clustering} by adding a term $\mathcal{Q}(D_i,D_j)$ that promotes incoherence between the differents dictionaries, e.g. this term encourage dictionaries to  be independent as possible :
+\begin{center}
+ $\underset{D_i, C_i}{\min} \sum_{i=1}^{K} \sum_{x_j \in C_i} \mathcal{R}(x_j,D_i) + \eta \sum_{i \neq j} \mathcal{Q}(D_i,D_j)$
+\end{center}
+For example we can take $\mathcal{Q}(D_i,D_j) = \|D^T_iD_j\|^2_F $ with F denotes Frobenius norm.

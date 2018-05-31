@@ -1,0 +1,76 @@
+
+\subsection{Solve the minimization problem}
+\subsubsection{Augmented Lagrangian}
+We handle the introduction of new equality constraints through an augmented Lagrangian approach \cite{6618901}:\\
+\begin{center}
+$ \hspace{-8cm} \mathcal{L}(d,s,z,t, \lambda_s, \lambda_t) =$ \\
+
+$ \frac{1}{2D} \| \hat{x} - \sum_{k=1}^{K} \hat{d}_k \odot \hat{z}_k \|^2_2 + \beta \|t\|_1$\\
+$ + \lambda^{T}_s(s-[\Phi^T \otimes I_K]\hat{d}) + \lambda^{T}_t (z - t)$\\
+$ \hspace{-1.7cm}+ \frac{\mu_s}{2} \| s - [\Phi^T \otimes I_K]\hat{d}\|^2_2$\\
+$ \hspace{-3.2cm}+ \frac{\mu_s}{2} \|z-t\|^2_2$
+\end{center}
+\subsubsection{Quad-decomposion of the objective}
+We decompose our objective into four convex subproblems:
+
+
+\paragraph{Subproblem z}:\vspace{0.5cm}\\
+$z^* = \underset{z}{\argmin}$ $\mathcal{L}(z,d,s,t, \lambda_s, \lambda_t)$\\
+$ = \mathcal{F}^{-1}\{\underset{z}{\argmin} \frac{1}{2}\|\hat{x} - \hat{D} \hat{z}\| + \hat{\lambda}_t^T(\hat{z}  - \hat{t}) + \frac{\mu_t}{2}\|\hat{z} - \hat{t}\|^2_2\}$\\
+$= \mathcal{F}^{-1}\{(\hat{D}^T \hat{D} + \mu_tI)^{-1}(\hat{D}^T \hat{x} +  \mu \hat{t} - \hat{\lambda}_t)\} \vspace{0.6cm}$\\
+Where $\hat{D} = [diag(\hat{d}_1),...,diag(\hat{d}_K)]$
+
+
+\paragraph{Subproblem t}:\vspace{0.5cm}\\
+$t^* =  \underset{t}{\argmin}$ $ \mathcal{L}(t,d,s,z,\lambda_s,\lambda_t)$\\
+$ =  \underset{t}{\argmin}\frac{\mu_t}{2} \|z - t\|^2_2 + \lambda_t^T(z-t) + \beta\|t\|_1$\\
+Unlike subproblem z, the solution to t cannot be efficiently computed in the Fourier domain (since $L_1$ norm is not rotaiton invariant). Solving t requires projecting $\hat{z}$ and $\hat{\lambda}_t$ back into the spatial domain. If this equation does not contain any rotations of the data, each element of t can be solved independently:\vspace{0.3cm}\\
+$t^* =  \underset{t}{\argmin} \beta |t| + \lambda_t(z-t) + \frac{\mu}{2}(z-t)^2$\\
+Where the optimal value of each t can be found using shrinkage function:\vspace{0.5cm}\\
+$t^* = sign(z + \frac{\lambda_t}{\mu_t}) . max\{|z + \frac{\lambda_t}{\mu_t} | - t , 0\}$
+
+\paragraph{Subproblem d}:\vspace{0.5cm}\\
+$d^* =  \underset{s}{\argmin}$ $  \mathcal{L}(d,s,z,t,\lambda_s, \lambda_t)$\\ 
+$ = \mathcal{F}^{-1} \{ \underset{\hat{d}}{\argmin}\frac{1}{2} \|\hat{x} - \hat{Z}\hat{d}\|^2_2 + \hat{\lambda}_s^T(\hat{d}- \hat{s}) + \frac{\mu}{2}\|\hat{d} - \hat{s}\|^2_2\}$\\
+$ = \mathcal{F}^{-1}\{(\hat{Z}^T \hat{Z} + \mu_s I)^{-1} (\hat{Z}^T \hat{x} + \mu_s \hat{s} - \hat{\lambda}_s)\}$
+\paragraph{Subproblem s}:\vspace{0.5cm}\\
+$s^* =\underset{s}{\argmin}$ $  \mathcal{L}(d,s,z,t,\lambda_s, \lambda_t) $\\
+$  = \underset{s}{\argmin}$ $\frac{\mu_s}{2} \|\hat{d} - [\Phi^T \otimes I_K]s\|^2_2 + \hat{\lambda}_s^T(\hat{d} - [\Phi^T \otimes I_K]s)$\\
+Solving this equation as it is a quadratically constrained quadratic programming problem (QCQP).  Due to the Kronecker product with the identity matrix $I_K$ it can be broken down into K independent problems:\\
+$s^*_k = \underset{s_k}{\argmin}$ $\frac{\mu_s}{2} \|\hat{d}_k  - \Phi^T s_k\|^2_2 + \hat{\lambda}_{sk}^T(\hat{d}_k - \Phi^T s_k)$\\
+Futher, since $\Phi$ is orthonormal projectiong the optimal solution to the unconstrained problem cab be found efficiently through:\\
+
+\begin{center}
+  $s^* =     \left\{
+                \begin{array}{ll}
+                 \|\tilde{s}\|^{-1}_2 \tilde{s}_k $ , if $ \|\tilde{s}\|^{-1}_2 \geq 1\\
+                \tilde{s}_k $ otherwise$\\
+                \end{array}
+              \right.$
+\end{center}
+where,
+\begin{center}
+ $\tilde{s}_k = (\mu_s \Phi \Phi^T)^{-1} (\Phi \hat{d}_k + \Phi \hat{\lambda}_{sk})$
+\end{center}
+
+Finally the solution to this equation can be found using :\\
+$\tilde{s}_k = \mathcal{M}\{\frac{1}{\mu_s} \sqrt{D}^{-1}(  \mathcal{F}^{-1}\{\hat{d}_k\} +  \mathcal{F}^{-1}\{\hat{\lambda}_{sk}\}  ) \}$\\
+
+
+\subsubsection{Lagrange Multiplier Update}
+\begin{center}
+ $\lambda^{(i+1)}_{t} \leftarrow \lambda^{(i)}_{t}  + \mu_t(z^{(i+1) - t^{(i+1)}}) $\\
+ $\lambda^{(i+1)}_{s} \leftarrow \lambda^{(i+1)}_{s}  +\mu_s(d^{(i+1) - s^{(i+1)}}) $\\
+\end{center}
+
+\subsubsection{Penalty update}
+Convergence may be reach if $\mu^{(i)} \rightarrow \infty$:
+
+\begin{center}
+  $\mu^{(i+1)} =     \left\{
+                \begin{array}{ll}
+                 \tau \mu^{(i)}$ if $\mu^{(i)} < \mu_{max} \\
+                \mu^{(i)}$ otherwise$\\
+                \end{array}
+              \right.$
+\end{center}

@@ -1,0 +1,24 @@
+\subsection{Idea}
+There are other algorithms like Efficient Shift-Invariant Dictionary learning which refers to the problem of discovering a set of latent basis vectors that capture informative \textit{local patterns} at different locations of the input sequences and not in all input sequences \cite{Zheng:2016:ESD:2939672.2939824}, to do that, we will use Convolutional Sparse Coding method.  
+\subsection{Problem formulation}
+Instead  of decomposing a signal as the $x = Dh$, Convolutional Sparse Coding (CSC) is the summation of convolutions between the feature map and the corresponding filter.
+\begin{center}
+ $X = \sum_{i=1}^{m} d_i * Z_i$\\  \vspace{0.4cm}
+  $\underset{d, z}{\argmin}  \frac{1}{2} \| x - \sum_{k=1}^{K} d_k * z_k \|_2^2 + \beta \|z_k \|_1$\\
+
+\end{center}
+This new approach assume the ensemble of input vectors X are independent of one another. But the complexity of convergence is dramatically increase.
+Bristow propose an Augmented Lagrangian and the used of  Alternative Direction Method of Multipliers (ADMM) \cite{6618901} to solve this problem. His approach is based on three key points:
+\begin{itemize}
+ \item The use of ADMM
+ \item The convolution subproblem can be solved efficiently (and explicitly) in the Fourier domain (instead of temporal domain)
+\item The use of quad-decomposition of the objective into four subproblems (that are convex)
+\end{itemize}
+In this approach, to solve a Convolutional Sparse Coding problem we introduce two auxilliary variables: \textbf{t} and \textbf{s} and posing the objective in the Fourier domain:
+\begin{center}
+$\underset{d, s, z, t}{\argmin} \hspace{0.4cm} \frac{1}{2D} \| \hat{x} - \sum_{k=1}^{K} \hat{d}_{k} \odot \hat{z}_k \|^2_2 + \beta \sum_{k=1}^{K} \|t_k\|_1$\\
+subject to $\hspace{0.4cm} \|s_k\|^2_2 \leq 1 $ for k = 1.. K\\
+                $ \hspace{2.4cm}s_k = \Phi^T \hat{d}_k$ for k = 1..K\\
+                $\hspace{1.9cm}z_k = t_k$ for k = 1..K
+\end{center}
+With $\Phi$ a D $\times$ M submatrix of the Fourier matrix $F = [\Phi,\Phi_\bot]$. In this formulation $\hat{d}_k$ is a D dimensional vector whereas in the original formulation $d_k \in \R^M$  is of a significantly smaller dimensionality to $M \ll D$  corresponding to its smaller spatial support. 

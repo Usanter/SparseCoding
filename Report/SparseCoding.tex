@@ -1,0 +1,189 @@
+\documentclass[a4paper,10pt]{article}
+
+\usepackage[utf8]{inputenc}
+%\usepackage[T1]{fontenc}
+%\usepackage[french]{babel}
+\usepackage[margin=1in]{geometry} 
+\usepackage{amsmath,amsthm,amssymb}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{mathtools}
+\usepackage{tcolorbox}
+\usepackage{listings}
+\usepackage{subcaption} % pour le subplot
+
+\newcommand{\R}{\mathbb{R}}  
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\C}{\mathbb{C}}
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+%opening
+\title{Intership - Sparse Coding and Dictionary learning}
+\author{Thomas Rolland}
+\date{}%Remove date
+
+\begin{document}
+
+
+\begin{titlepage} % Suppresses displaying the page number on the title page and the subsequent page counts as page 1
+	\newcommand{\HRule}{\rule{\linewidth}{0.5mm}} % Defines a new command for horizontal lines, change thickness here
+		%------------------------------------------------
+	%	Logo
+	%------------------------------------------------
+	
+	\includegraphics[scale=2]{siteon0.png} % Include a department/university logo - this will require the graphicx package
+\hfill
+ \includegraphics[scale=2]{SAMOVA.png}
+ % SAMOVA.png: 226x110 px, 300dpi, 1.91x0.93 cm, bb=0 0 54 26
+
+	\center % Centre everything on the page
+	
+	%------------------------------------------------
+	%	Headings
+	%------------------------------------------------
+	
+	\textsc{\LARGE Université de Toulouse 3 - Paul Sabatier}\\[1.5cm] % Main heading such as the name of your university/college
+	
+	\textsc{\Large Institut de Recherche en Informatique de Toulouse - IRIT}\\[0.5cm] % Major heading such as course name
+	
+	\textsc{\large SAMOVA}\\[0.5cm] % Minor heading such as course title
+	
+	%------------------------------------------------
+	%	Title
+	%------------------------------------------------
+	
+	\HRule\\[0.4cm]
+	
+	{\huge\bfseries Neural network vs. statistical methods
+\\ \vspace{0.5cm}- \vspace{0.5cm} \\  Comparison of methods for learning sound units using Dictionary Learning and Sparse Coding}\\[0.4cm] % Title of your document
+	
+	\HRule\\[1.5cm]
+	
+	%------------------------------------------------
+	%	Author(s)
+	%------------------------------------------------
+	
+	\begin{minipage}{0.4\textwidth}
+		\begin{flushleft}
+			\large
+			\textit{Author}\\
+			Thomas \textsc{Rolland} % Your name
+		\end{flushleft}
+	\end{minipage}
+	~
+	\begin{minipage}{0.4\textwidth}
+		\begin{flushright}
+			\large
+			\textit{Supervisor}\\
+			Thomas \textsc{Pellegrini}\\ % Supervisor's name\\
+            Carine \textsc{Jauberthie}
+		\end{flushright}
+	\end{minipage}
+	
+	% If you don't want a supervisor, uncomment the two lines below and comment the code above
+	%{\large\textit{Author}}\\
+	%John \textsc{Smith} % Your name
+	
+	%------------------------------------------------
+	%	Date
+	%------------------------------------------------
+	
+	\vfill\vfill\vfill % Position the date 3/4 down the remaining page
+	
+	{\large\today} % Date, change the \today to a set date if you want to be precise
+	
+
+	%----------------------------------------------------------------------------------------
+	
+	\vfill % Push the date up 1/4 of the remaining page
+	
+\end{titlepage}
+
+\begin{abstract}
+Little document to summarize state-of-the-art sparse coding and dictionary learning for weekly supervised and unsupervised feature extraction in speech. Introduction to 1.2 is based on the Hugo Larochelle courses.\\
+\begin{center}
+
+\textbf{This document is a draft }
+ 
+\end{center}
+\end{abstract}
+
+
+\tableofcontents
+
+
+\section{Sparse coding}
+\input{introduction.tex}
+\input{Inference_of_Sparse_Code.tex}
+\input{PartI_mnist.tex}
+\input{applicationLena.tex}
+\input{Dictionary_learning_and_sparse_coding_for_unsupervised_clustering.tex}
+\newpage
+\section{Discriminative Dictionary }
+There are serveral approach for discriminative Dictionary Learning enumerate by \cite{8294264}:
+\begin{itemize}
+ \item In presence of label:
+    \begin{enumerate}
+     \item Learn one dictionary per class
+     \item Prune large dictionaries
+     \item Jointly learn dictionary and classifier
+     \item Embed class label into the learning of sparse coefficients
+     \item Learn a histogram of dictionary element over signal constituents
+    \end{enumerate}
+
+ \item For weakly supervised:\\
+    Serveral max margin based, non-convolutive, syntgesis dictionary learning approaches.
+\end{itemize}
+However in our problem of extract new features for speech we must compare each $\alpha$ with other, thus we must use only one dictionary.
+
+\input{OneDPerClass.tex}
+\input{SDL.tex}
+\input{LC-KSVD.tex}
+\newpage
+\input{LC-KSVD_MNIST.tex}
+\newpage
+\newpage
+\input{LC-KSVD_voyellestex.tex}
+\newpage
+\section{Convolutional Sparse Coding}
+Notations:
+\begin{itemize}
+ \item Matrix: Uppercase  \textbf{A}
+ \item Vector: Lower-case  \textbf{a}
+ \item Scalar: Lower-case a
+ \item 2D convolution operation : *
+ \item $D \times D$ identity matrix: \textbf{$I_D$}
+ \item Kronecker product : $\odot$
+ \item $D \times D$ Fourier matrix : \textbf{F}
+ \item Hadamard product: $\otimes$
+ \item inverse FFT : $ \mathcal{F}^{-1}$
+ \item Mapping function that preserve only $M \ll D$ active values relating to the small spaital structure of the estimated filter : $ \mathcal{M}\{\}$
+\end{itemize} 
+
+\input{CSC_idea_pbformulation.tex}
+\input{solvingCSC.tex}
+\subsection{SPORCO}
+SPORCO (SParse Optimization Research COde) is a Python package for solving optimization problem with sparsity problem. These conssit primarily of sparse coding and dictionary learning problems but there is also support for other problems suchs as Convolutional sparse coding \cite{wohlberg-2017-sporco, wohlberg-2016-sporco}
+
+You can find my code of Convolutional Sparse Coding/Dictionary learning on MNIST using SPORCO toolbox on my github \texttt{CSC.py}.\\
+
+\newpage
+\input{CSC_random.tex}
+\newpage
+\input{CSC_mnist.tex}
+\newpage
+\section{Supervised Convolutional Sparse Coding}
+TODO
+%====================PART 2 SPARSE CODING FOR SR=========
+\newpage
+\section{Sparse Coding for speech recognition}
+In this part of the paper we will see novel feature exraction technique based on the principles of sparse coding \cite{DL_speech_reco}. Sparse codigin deals with the problem of how represent a given audio input as a linear combination of a minimum number of basis function. The weights of the linear combination are used as feature for speech recognition (acoustic modeling). Note the input dimensionality is typically \textbf{much} less than the number of atoms in the dictionary \textit{i.e.} we use overcomplete dictionary.\\
+We use Sparse Coding algorithm as describe before and we get the dictionary D and  the matrix of sparse coefficients  h.\\
+\paragraph{Reflection path} In \cite{DL_speech_reco} they used spectro-temporal speech domain wich is obtained by performing a short time Fourier transform (STFT) with an analysis window of length 25 ms and a frameshit of 10 ms on the input signal. Log critical band energies are subsequently obtained by projecting the magnitude square values of the STFT output on a set of frequency weights, which are equally spaced on the Bark frequence scale, and then applying a logarithm on the output projections.
+\newpage
+\bibliographystyle{plain}
+\bibliography{efficient-sparse-coding-algorithms.bib}
+
+\end{document}

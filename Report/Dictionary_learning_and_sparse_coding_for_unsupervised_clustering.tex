@@ -1,0 +1,35 @@
+\subsection{Dictionary learning and sparse coding for unsupervised clustering}
+\label{sec:Clustering}
+Whereas the previous tests seem to have a good result, one question appears \\ \textit{What makes us confident about the fact that two close images (two handwritten 3 for example) have close coefficients representation h ?}\\
+Sprechmann and Sapiro \cite{5494985} propose an algorithm to cluster datasets that are well represented in the sparse modelling framework with a set of K learned dictionaries. The main idea is, given a set of K dictionaries, find for each signal in the dictionary for which the "best" sparse decomposition is obtained, with :
+
+\begin{center}
+$\underset{D_i,C_i}{\min} \sum_{i=1}^{K} \sum_{x_j \in C_i} \mathcal{R}(x_j, D_i)$
+ 
+\end{center}
+Here $D_i \in \R^{n \times k_i}$ is the $k_i$ dictionary associated with the class $C_i$. $x_j \in \R^n$ are the input data and $\mathcal{R}$  a function that mesure how good the sparse decomposition is for the signal $x_j$ under the dictionary $D_i$. Sprechmann and Sapiro propose to use the cost function in the Lasso-type problem as $\mathcal{R}$ the measure of performance, $\mathcal{R}(x,D) = \|x - D\alpha\|^2_2 + \lambda \|\alpha\|_1$. The class $\mathcal{C}$ for a given signal x is found by solving $\mathcal{C}= \underset{j=1,..,K}{\argmin}$ $ \mathcal{R}(x,Dj) $.
+
+\subsubsection{Dictionary learning for clustering}
+Given a set of signals and number of classes, we want to find a set of K learned dictionaries that best represent x (the input data). \cite{5494985} formulate thus as an energy minimization problem and use the measure previously proposed,\\
+\begin{center}
+ $\underset{D_i,C_i}{\min} \sum_{i=1}^{K} \sum_{x_j \in C_i} \underset{\alpha_{ij}}{\min}\|x_j - D_i \alpha_{ij}\|^2_2 + \lambda\|\alpha_{ij}\|_1$
+\end{center}
+The optimization is carried out by solving one problem at time:
+\begin{itemize}
+ \item \textit{Assignement step:} The dictionaries are fixed and each signals is assigned to the cluster for which the best representation is obtained.
+ \item \textit{Update step:} The new dictionaries are computed fixing the assignation found in the previous step.
+\end{itemize}
+One drawback of this algorithm is there is no guarantee of reach a global minimum. In this setting, repeated initialization are computationally expensive, thus we need a good initialization.
+
+\subsubsection{Initialization}
+The initialization can be given by a set of K dictionaries or as an initial partition of the data.\\
+The main idea is to construct a similarity matrix and use it as the input for a spectral clustering algorithm. Let define $A = [\alpha_1,....,  \alpha_m]$ with $\alpha_j$ the sparse representation of each signal $x_j$. To obtain a good classification, we expect two signal to the same cluster to have decomposition that uses similar atoms. Thus we can compute two similarity matrix:
+\begin{itemize}
+ \item \textit{Clustering the signals :} Construct a similarity matrix $S_1 \in \R^{m \times m}$ which measure the similarity of two signals by comparing the corresponding sparse representation:\\
+ $S_1 = |A|^T |A|$
+ \item \textit{Clustering the atoms :} Construct a similarity matrix $S_2 \in \R^{k_0 \times k_0}$ ( with $D_0 \in \R^{n \times k_0}$) which represent the similarity of two atoms by comparing how many signals use them simultaneously and how they contribute in their sparse decomposition.\\
+ $S_2 = |A||A|^T$
+\end{itemize}
+In this two case, the similarity matrixes are positive semidefinite and can be associated with a graph: $G_1 = \{X,S_1\}$ and $G_2 = \{D,S_2\}$ where the data (respectivly atoms) are the sets of vertexes with the corresponding $S_i$ as edge weights matrixes. This graph is partitioned using standard spectral clustering algorithm to obtain the initialization.\\
+However, when K is large (the number of class), the performance of initial clusterization decreases. To fix this problem \cite{5494985} proposed to stat with the whole set as the only partition and at each itation we subdivise in two sets each of the current partitions, the procedure stops when the desired number of clusters is reached.
+

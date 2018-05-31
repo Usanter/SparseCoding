@@ -1,0 +1,42 @@
+
+\subsection{Application on ``voyelle'' dataset }
+We have for our experiments some audio signals that have been recorded in a studio. The speaker pronounces 10 vowels. There are 100 occurrences of each vowel (\textit{aa, ee, eh, eu, ii, oe, oh, oo, uu, yy}). Each signal is of 1024 sample.\\
+A cepstral parametrization has been extracted from these samples, and a PCA has been done to reduce the data's dimension to  2 and 12. \vspace{0.5cm} \\
+First, we focus our research on 2 dimension dataset. There are 10 classes which correspond to 10 vowels.\newline
+\begin{figure}[h]
+ \centering
+ \includegraphics[scale=1]{../Results/Voyelles/voyelle_2.png}
+ % voyelle_2.png: 445x648 px, 100dpi, 11.30x16.46 cm, bb=0 0 320 467
+ \caption{Kmean classification on A$\alpha$ from the train dataset}
+\end{figure}
+ \\
+\textit{Note: Here there is bad cluster identification (this is why we don't have a perfect diagonal matrix), however, the result is the same: In this case, our method is bad for classification because on the same row or column there is sometimes a bad repartition. It's due to the length of our input vector (2 dimensional vector), which is not enough to get the good result for classification using this method of Sparse representation of the signal.} \vspace{0.5cm}
+\newpage
+Then we focus our approach on 12 dimension dataset:
+\begin{figure}[h]
+ \centering
+ \includegraphics[scale=0.49]{../Results/Voyelles/voyelle_13_train.png}
+ % voyelle_13_train.png: 800x630 px, 100dpi, 20.32x16.00 cm, bb=0 0 576 454
+ \caption{Kmean on data12 train set}
+\end{figure}
+\begin{figure}[h]
+ \centering
+ \includegraphics[scale=0.5]{../Results/Voyelles/voyelle_13_test.png}
+ % voyelle_13_test.png: 1366x660 px, 100dpi, 34.70x16.76 cm, bb=0 0 984 475
+ \caption{Kmean on data12 test set}
+\end{figure}
+ \begin{figure}[h]
+ \centering
+ \includegraphics[scale=0.45]{../Results/Voyelles/VoyellesAhRepartition.png}
+ % VoyellesAhRepartition.png: 1366x660 px, 100dpi, 34.70x16.76 cm, bb=0 0 984 475
+ \caption{ Four examples of A$\alpha$ from two different classes (orange and blue : Class 1, red and green: Class 2)}
+\end{figure}
+\newpage
+\subsection{Discussion}
+LC-KSVD perform well on our two datasets (MNIST and voyelle) when the input data are large enough (when input equal 2 we can see we get a bad result of clusterization). With this method we have two dictionaries: 
+\begin{enumerate}
+ \item \textbf{D} : A reconstructive dictionary
+ \item \textbf{A}: A discriminative dictionary
+\end{enumerate}
+Using \textbf{A} we get a new representation of our input, a discriminative one, that we can put in the input of classifier to get a good classification.\\
+However, this method works well on non-shift variant signals. When we have shift variant signal this method will fail to get a good discriminative representation i.e. If we have the same signal but delay with $\delta$, LC-KSVD will fail to get a close representation of the two signals.
