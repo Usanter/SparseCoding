@@ -28,7 +28,7 @@ def create_Q(labels, nb_class, k,n):
 
 def LC_KSVD(X, Q, lambda1,m, k=1024):
 
-    param = {'mode':5, 'K':1024, 'lambda1':0.04285714285714286, 'numThreads':5, 'batchsize':400, 'iter':100}
+    param = {'mode':5, 'K':1024, 'lambda1':0.04285714285714286, 'numThreads':5, 'batchsize':400, 'iter':1000}
 
 
     # Find a overcomplete dictionary
@@ -39,16 +39,23 @@ def LC_KSVD(X, Q, lambda1,m, k=1024):
     h_0 = spams.omp(X,D_0,lambda1=0.04285714285714286) 
     print("H0........................Done")
     
-    # Compute A_0
-    
+    # Compute A_0 
+  
+    #print(type(Q))
+    #print(type(h_0))
     lambda2 = 0.5                                   #NOTE Verify this
     I = np.identity(k) 
-
-    A_0 = Q * np.transpose(h_0) * np.linalg.inv(h_0 * np.transpose(h_0) + lambda2 * I)
+    tmp = np.dot(h_0.toarray(),Q.T)
+    #print(tmp.shape)
+    tmp2 = np.linalg.inv(np.dot(h_0 ,np.transpose(h_0)) + lambda2 * I)
+    #print(tmp2.shape)
+    #tmp3 = np.dot(tmp,tmp2)
+    A_0 =  np.dot(tmp2,tmp)
+    #A_0 = np.dot(np.dot(Q, np.transpose(h_0)),np.linalg.inv(np.dot(h_0 ,np.transpose(h_0)) + lambda2 * I))
     print(np.shape(A_0))
     print("Initial step..............Done") 
 
-    # Init Ynew and Dnew
+    # Init Ynew and Dnews
     
 
     Ynew =(np.concatenate([X,math.sqrt(5)*Q]))
@@ -65,11 +72,13 @@ def LC_KSVD(X, Q, lambda1,m, k=1024):
     print("KSVD......................Done")
 
     # Extract (D and A) and Normalize them
-    print(np.shape(D))
+    #print(np.shape(D))
     D_ext = D[:m] 
-    print(np.shape(D_ext))
+    #print(tmp.shape)
+    #print(tmp.shape)
+    #print(np.shape(D_ext))
     A_ext = D[m:]
-    print(np.shape(D_ext))
+    #print(np.shape(D_ext))
     
     Dt = np.transpose(D_ext)
     At = np.transpose(A_ext)
@@ -115,7 +124,7 @@ fileD = open('D_LC-KSVD.mat','wb')
 fileH = open('h_LC-KSVD.mat','wb')
 fileA = open('A_LC-KSVD.mat','wb')
 np.save(fileD,D)
-np.save(fileH,h.todense())
+np.save(fileH,h.toarray())
 np.save(fileA,A)
 
 print("Save files...............Done")
