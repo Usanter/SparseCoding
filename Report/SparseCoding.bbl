@@ -1,0 +1,110 @@
+\begin{thebibliography}{10}
+
+\bibitem{1710377}
+M.~Aharon, M.~Elad, and A.~Bruckstein.
+\newblock lt;tex gt;$rm k$ lt;/tex gt;-svd: An algorithm for designing
+  overcomplete dictionaries for sparse representation.
+\newblock {\em IEEE Transactions on Signal Processing}, 54(11):4311--4322, Nov
+  2006.
+
+\bibitem{6618901}
+H.~Bristow, A.~Eriksson, and S.~Lucey.
+\newblock Fast convolutional sparse coding.
+\newblock In {\em 2013 IEEE Conference on Computer Vision and Pattern
+  Recognition}, pages 391--398, June 2013.
+
+\bibitem{305222}
+Scott~Shaobing Chen, David~L. Donoho, and Michael~A. Saunders.
+\newblock Atomic decomposition by basis pursuit.
+\newblock {\em SIAM J. Sci. Comput.}, 20(1):33--61, December 1998.
+
+\bibitem{6516503}
+Z.~Jiang, Z.~Lin, and L.~S. Davis.
+\newblock Label consistent k-svd: Learning a discriminative dictionary for
+  recognition.
+\newblock {\em IEEE Transactions on Pattern Analysis and Machine Intelligence},
+  35(11):2651--2664, Nov 2013.
+
+\bibitem{Mairal:2009:ODL:1553374.1553463}
+Julien Mairal, Francis Bach, Jean Ponce, and Guillermo Sapiro.
+\newblock Online dictionary learning for sparse coding.
+\newblock In {\em Proceedings of the 26th Annual International Conference on
+  Machine Learning}, ICML '09, pages 689--696, New York, NY, USA, 2009. ACM.
+
+\bibitem{DBLP:journals/corr/MakhzaniF13}
+Alireza Makhzani and Brendan~J. Frey.
+\newblock k-sparse autoencoders.
+\newblock {\em CoRR}, abs/1312.5663, 2013.
+
+\bibitem{258082}
+S.~G. Mallat and Zhifeng Zhang.
+\newblock Matching pursuits with time-frequency dictionaries.
+\newblock {\em IEEE Transactions on Signal Processing}, 41(12):3397--3415, Dec
+  1993.
+
+\bibitem{Olshausen97sparsecoding}
+Bruno~A. Olshausen and David~J. Fieldt.
+\newblock Sparse coding with an overcomplete basis set: a strategy employed by
+  v1.
+\newblock {\em Vision Research}, 37:3311--3325, 1997.
+
+\bibitem{8398588}
+V.~Papyan, Y.~Romano, J.~Sulam, and M.~Elad.
+\newblock Theoretical foundations of deep learning via sparse representations:
+  A multilayer sparse model and its connection to convolutional neural
+  networks.
+\newblock {\em IEEE Signal Processing Magazine}, 35(4):72--89, July 2018.
+
+\bibitem{5539964}
+I.~Ramirez, P.~Sprechmann, and G.~Sapiro.
+\newblock Classification and clustering via dictionary learning with structured
+  incoherence and shared features.
+\newblock In {\em 2010 IEEE Computer Society Conference on Computer Vision and
+  Pattern Recognition}, pages 3501--3508, June 2010.
+
+\bibitem{Rumelhart:1986:LIR:104279.104293}
+D.~E. Rumelhart, G.~E. Hinton, and R.~J. Williams.
+\newblock Parallel distributed processing: Explorations in the microstructure
+  of cognition, vol. 1.
+\newblock chapter Learning Internal Representations by Error Propagation, pages
+  318--362. MIT Press, Cambridge, MA, USA, 1986.
+
+\bibitem{best-practices-for-convolutional-neural-networks-applied-to-visual-document-analysis}
+Patrice~Y. Simard, Dave Steinkraus, and John Platt.
+\newblock Best practices for convolutional neural networks applied to visual
+  document analysis.
+\newblock Institute of Electrical and Electronics Engineers, Inc., August 2003.
+
+\bibitem{DBLP:journals/corr/abs-1708-08705}
+Jeremias Sulam, Vardan Papyan, Yaniv Romano, and Michael Elad.
+\newblock Multi-layer convolutional sparse modeling: Pursuit and dictionary
+  learning.
+\newblock {\em CoRR}, abs/1708.08705, 2017.
+
+\bibitem{wohlberg-2016-sporco}
+Brendt Wohlberg.
+\newblock {SP}arse {O}ptimization {R}esearch {CO}de ({SPORCO}).
+\newblock Software library available from
+  http://purl.org/brendt/software/sporco, 2016.
+
+\bibitem{wohlberg-2017-sporco}
+Brendt Wohlberg.
+\newblock {SPORCO}: {A} {P}ython package for standard and convolutional sparse
+  representations.
+\newblock In {\em Proceedings of the 15th Python in Science Conference}, pages
+  1--8, Austin, TX, USA, July 2017.
+
+\bibitem{8294264}
+Z.~You, R.~Raich, X.~Z. Fern, and J.~Kim.
+\newblock Weakly supervised dictionary learning.
+\newblock {\em IEEE Transactions on Signal Processing}, 66(10):2527--2541, May
+  2018.
+
+\bibitem{Zheng:2016:ESD:2939672.2939824}
+Guoqing Zheng, Yiming Yang, and Jaime Carbonell.
+\newblock Efficient shift-invariant dictionary learning.
+\newblock In {\em Proceedings of the 22Nd ACM SIGKDD International Conference
+  on Knowledge Discovery and Data Mining}, KDD '16, pages 2095--2104, New York,
+  NY, USA, 2016. ACM.
+
+\end{thebibliography}

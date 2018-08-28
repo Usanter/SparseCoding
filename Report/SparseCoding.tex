@@ -1,17 +1,29 @@
-\documentclass[a4paper,10pt]{article}
+\documentclass[a4paper,10pt]{report}
 
 \usepackage[utf8]{inputenc}
 %\usepackage[T1]{fontenc}
 %\usepackage[french]{babel}
 \usepackage[margin=1in]{geometry} 
 \usepackage{amsmath,amsthm,amssymb}
+\usepackage{algorithm}
+\usepackage{algorithmic}
 \usepackage{lmodern}
 \usepackage{graphicx}
 \usepackage{mathtools}
 \usepackage{tcolorbox}
 \usepackage{listings}
 \usepackage{subcaption} % pour le subplot
+\usepackage{fancyhdr}
+\usepackage[bottom]{footmisc}
+\usepackage[hidelinks]{hyperref}
+\usepackage{xcolor}
+\usepackage[framemethod=tikz]{mdframed}
+\usepackage{varwidth}
+                                                                       
+% Specific font for headings 
 
+
+\pagestyle{fancy}
 \newcommand{\R}{\mathbb{R}}  
 \newcommand{\Z}{\mathbb{Z}}
 \newcommand{\N}{\mathbb{N}}
@@ -19,6 +31,8 @@
 \newcommand{\C}{\mathbb{C}}
 \DeclareMathOperator*{\argmax}{arg\,max}
 \DeclareMathOperator*{\argmin}{arg\,min}
+
+
 %opening
 \title{Intership - Sparse Coding and Dictionary learning}
 \author{Thomas Rolland}
@@ -33,10 +47,10 @@
 	%	Logo
 	%------------------------------------------------
 	
-	\includegraphics[scale=2]{siteon0.png} % Include a department/university logo - this will require the graphicx package
+	\includegraphics[scale=0.2]{siteon0.png} % Include a department/university logo - this will require the graphicx package
 \hfill
- \includegraphics[scale=2]{SAMOVA.png}
- % SAMOVA.png: 226x110 px, 300dpi, 1.91x0.93 cm, bb=0 0 54 26
+ \includegraphics[scale=2]{SAMoVA.png}
+ % SAMoVA.png: 226x110 px, 300dpi, 1.91x0.93 cm, bb=0 0 54 26
 
 	\center % Centre everything on the page
 	
@@ -44,11 +58,11 @@
 	%	Headings
 	%------------------------------------------------
 	
-	\textsc{\LARGE Université de Toulouse 3 - Paul Sabatier}\\[1.5cm] % Main heading such as the name of your university/college
+	\textsc{\Large Final Graduation Project Report}\\[1.5cm] % Main heading such as the name of your university/college
 	
 	\textsc{\Large Institut de Recherche en Informatique de Toulouse - IRIT}\\[0.5cm] % Major heading such as course name
 	
-	\textsc{\large SAMOVA}\\[0.5cm] % Minor heading such as course title
+	\textsc{\large SAMoVA}\\[0.5cm] % Minor heading such as course title
 	
 	%------------------------------------------------
 	%	Title
@@ -56,8 +70,8 @@
 	
 	\HRule\\[0.4cm]
 	
-	{\huge\bfseries Neural network vs. statistical methods
-\\ \vspace{0.5cm}- \vspace{0.5cm} \\  Comparison of methods for learning sound units using Dictionary Learning and Sparse Coding}\\[0.4cm] % Title of your document
+	{\huge\bfseries Statistical methods vs. Neural network 
+\\ \vspace{0.5cm}- \vspace{0.5cm} \\  Comparison of methods for learning units using Dictionary Learning and Sparse Coding vs Auto-encoders}\\[0.4cm] % Title of your document
 	
 	\HRule\\[1.5cm]
 	
@@ -76,21 +90,29 @@
 	\begin{minipage}{0.4\textwidth}
 		\begin{flushright}
 			\large
-			\textit{Supervisor}\\
+			\textit{Supervisors}\\
 			Thomas \textsc{Pellegrini}\\ % Supervisor's name\\
+			Adrian \textsc{Basarab}\\ \vspace{0.2cm}
             Carine \textsc{Jauberthie}
+            
 		\end{flushright}
 	\end{minipage}
 	
 	% If you don't want a supervisor, uncomment the two lines below and comment the code above
 	%{\large\textit{Author}}\\
 	%John \textsc{Smith} % Your name
-	
+% 	
 	%------------------------------------------------
 	%	Date
 	%------------------------------------------------
 	
-	\vfill\vfill\vfill % Position the date 3/4 down the remaining page
+	\vfill
+	\begin{center}
+ \includegraphics[scale=1]{Logo_UT3.jpg}
+ % Logo_UT3.jpg: 799x269 px, 300dpi, 6.76x2.28 cm, bb=0 0 192 65
+\end{center}
+
+	\vfill % Position the date 3/4 down the remaining page
 	
 	{\large\today} % Date, change the \today to a set date if you want to be precise
 	
@@ -101,89 +123,99 @@
 	
 \end{titlepage}
 
-\begin{abstract}
-Little document to summarize state-of-the-art sparse coding and dictionary learning for weekly supervised and unsupervised feature extraction in speech. Introduction to 1.2 is based on the Hugo Larochelle courses.\\
-\begin{center}
+% \begin{abstract}
+% Nowadays deep learning methods allow to have state-of-the-art results for many tasks. Here we focus on discriminant parameter extraction using statistical and deep learning methods. Our objective was to compare different methods to know which of these two approaches is useful in our problem. It has been shown that deep learning allows better results than statistical approaches. In addition, we have proposed a new autoencoder model that uses an idea from the statistical approach. This new autoencoder is the best method we've used to solve this problem.\\
+% \end{abstract}
 
-\textbf{This document is a draft }
- 
-\end{center}
-\end{abstract}
+\chapter*{Remerciements}
 
+Je voudrais remercier toute l'équipe SAMoVA sans laquelle ce stage n'aurait jamais eu lieu. Merci de leurs accueils ainsi que leurs précieux conseils pendant ces cinq mois. Je souhaiterais notamment remercier Thomas Pellegrini d'avoir encadré ce stage, pour ses conseils, ses idées, sa patience et son accueil. Il mérite amplement son nom de Monsieur "Deep Learning" de SAMoVA.\\
 
+Je voudrais aussi remercier Adrian Basarab d'être intervenu comme expert des méthodes de Sparse Coding, ses conseils ont été précieux dans la réussite de ce stage.\\
+
+Ce stage n'aurais pas été ce qu'il a été sans la présence des différents doctorants et stagiaires des différentes équipes du Thème 1. Merci à eux de m'avoir permis de travailler dans une bonne ambiance.\\
+
+Je souhaiterais naturellement remercier aussi mes proches, ma famille, mes amis.\\
+
+Certain d'oublier quelqu'un, je remercie aussi tous ceux qui ont participés à ce stage, de près ou de loin.\\
+
+\vspace{10cm}\hspace{7cm} J'ai aussi une pensée pour Mamie Brest et Lili.
+\newpage
 \tableofcontents
 
+\chapter{Introduction}
 
-\section{Sparse coding}
+
+\label{chap:Introduction}
+\input{intro.tex}
+\newpage
+\chapter{Traditional Sparse Coding}
+\label{chap:SparseCoding}
 \input{introduction.tex}
 \input{Inference_of_Sparse_Code.tex}
-\input{PartI_mnist.tex}
-\input{applicationLena.tex}
-\input{Dictionary_learning_and_sparse_coding_for_unsupervised_clustering.tex}
+\input{DL.tex}
 \newpage
-\section{Discriminative Dictionary }
-There are serveral approach for discriminative Dictionary Learning enumerate by \cite{8294264}:
-\begin{itemize}
- \item In presence of label:
-    \begin{enumerate}
-     \item Learn one dictionary per class
-     \item Prune large dictionaries
-     \item Jointly learn dictionary and classifier
-     \item Embed class label into the learning of sparse coefficients
-     \item Learn a histogram of dictionary element over signal constituents
-    \end{enumerate}
+\input{PartI_mnist.tex}
+%\input{applicationLena.tex}
+%\input{Dictionary_learning_and_sparse_coding_for_unsupervised_clustering.tex}
 
- \item For weakly supervised:\\
-    Serveral max margin based, non-convolutive, syntgesis dictionary learning approaches.
-\end{itemize}
-However in our problem of extract new features for speech we must compare each $\alpha$ with other, thus we must use only one dictionary.
-
+\newpage
+\chapter{Discriminative Sparse Coding }
+\label{chap:Discriminative}
+\input{introDiscriminative.tex}
 \input{OneDPerClass.tex}
-\input{SDL.tex}
+%\input{SDL.tex}
 \input{LC-KSVD.tex}
 \newpage
 \input{LC-KSVD_MNIST.tex}
+%\newpage
+%\newpage
+%\input{LC-KSVD_voyellestex.tex}
 \newpage
-\newpage
-\input{LC-KSVD_voyellestex.tex}
-\newpage
-\section{Convolutional Sparse Coding}
-Notations:
-\begin{itemize}
- \item Matrix: Uppercase  \textbf{A}
- \item Vector: Lower-case  \textbf{a}
- \item Scalar: Lower-case a
- \item 2D convolution operation : *
- \item $D \times D$ identity matrix: \textbf{$I_D$}
- \item Kronecker product : $\odot$
- \item $D \times D$ Fourier matrix : \textbf{F}
- \item Hadamard product: $\otimes$
- \item inverse FFT : $ \mathcal{F}^{-1}$
- \item Mapping function that preserve only $M \ll D$ active values relating to the small spaital structure of the estimated filter : $ \mathcal{M}\{\}$
-\end{itemize} 
-
+\chapter{Convolutional Sparse Coding}
+\label{chap:Conv}
 \input{CSC_idea_pbformulation.tex}
 \input{solvingCSC.tex}
-\subsection{SPORCO}
-SPORCO (SParse Optimization Research COde) is a Python package for solving optimization problem with sparsity problem. These conssit primarily of sparse coding and dictionary learning problems but there is also support for other problems suchs as Convolutional sparse coding \cite{wohlberg-2017-sporco, wohlberg-2016-sporco}
-
-You can find my code of Convolutional Sparse Coding/Dictionary learning on MNIST using SPORCO toolbox on my github \texttt{CSC.py}.\\
-
+\section{SPORCO}
+SPORCO \footnote{https://sporco.readthedocs.io/en/latest/index.html} (\textbf{SP}arse \textbf{O}ptimization \textbf{R}esearch \textbf{CO}de) is a Python package developed by  B. Wohlberg for solving optimization problem with sparsity problem  \cite{wohlberg-2017-sporco, wohlberg-2016-sporco}. These consist primarily of sparse coding and dictionary learning problems but there is also support for other problems such as:
+\begin{itemize}
+ \item Convolutional sparse coding
+ \item ADMM
+ \item Iterative shrinkage
+ \item Total variation regularisation
+ \item Robust PCA
+ \item \dots
+\end{itemize}
+We will use Convolutional Sparse coding algorithm from this toolbox to confirm that CSC is shift-invariant.
 \newpage
-\input{CSC_random.tex}
+%\input{CSC_random.tex}
 \newpage
 \input{CSC_mnist.tex}
 \newpage
-\section{Supervised Convolutional Sparse Coding}
-TODO
+\chapter{Discriminative Convolutional Sparse Coding}
+% L'idée : Multi couche -> ML-CSC
+% On rajoute un terme pour être sur que c'est discrimnant
+\label{chap:SupervisedConv}
+\input{CSC_discriminative.tex}
+
 %====================PART 2 SPARSE CODING FOR SR=========
 \newpage
-\section{Sparse Coding for speech recognition}
-In this part of the paper we will see novel feature exraction technique based on the principles of sparse coding \cite{DL_speech_reco}. Sparse codigin deals with the problem of how represent a given audio input as a linear combination of a minimum number of basis function. The weights of the linear combination are used as feature for speech recognition (acoustic modeling). Note the input dimensionality is typically \textbf{much} less than the number of atoms in the dictionary \textit{i.e.} we use overcomplete dictionary.\\
-We use Sparse Coding algorithm as describe before and we get the dictionary D and  the matrix of sparse coefficients  h.\\
-\paragraph{Reflection path} In \cite{DL_speech_reco} they used spectro-temporal speech domain wich is obtained by performing a short time Fourier transform (STFT) with an analysis window of length 25 ms and a frameshit of 10 ms on the input signal. Log critical band energies are subsequently obtained by projecting the magnitude square values of the STFT output on a set of frequency weights, which are equally spaced on the Bark frequence scale, and then applying a logarithm on the output projections.
+%\chapter{Sparse Coding for speech recognition}
+%In this part of the paper we will see novel feature exraction technique based on the principles of sparse coding \cite{DL_speech_reco}. Sparse codigin deals with the problem of how represent a given audio input as a linear combination of a minimum number of basis function. The weights of the linear combination are used as feature for speech recognition (acoustic modeling). Note the input dimensionality is typically \textbf{much} less than the number of atoms in the dictionary \textit{i.e.} we use overcomplete dictionary.\\
+%We use Sparse Coding algorithm as describe before and we get the dictionary D and  the matrix of sparse coefficients  h.\\
+%\paragraph{Reflection path} In \cite{DL_speech_reco} they used spectro-temporal speech domain wich is obtained by performing a short time Fourier transform (STFT) with an analysis window of length 25 ms and a frameshit of 10 ms on t- Auto-encoder as a Deep learning approchhe input signal. Log critical band energies are subsequently obtained by projecting the magnitude square values of the STFT output on a set of frequency weights, which are equally spaced on the Bark frequence scale, and then applying a logarithm on the output projections.
+%\newpage
+
+\chapter{Auto-encoders}
+\label{chap:AE}
+\input{AE.tex}
+    %\input{ApplicationAE.tex}
 \newpage
+\chapter{Conclusion}
+\label{chap:Conclusion}
+\input{results.tex}
 \bibliographystyle{plain}
 \bibliography{efficient-sparse-coding-algorithms.bib}
+
 
 \end{document}

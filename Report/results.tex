@@ -1,0 +1,30 @@
+As a reminder, all results of this internship are:\\
+
+{%
+\newcommand{\mc}[3]{\multicolumn{#1}{#2}{#3}}
+\begin{center}
+\begin{tabular}{lll}\cline{1-1}
+\hline
+\mc{3}{c}{Summary table of accuracy depending on the methods}\\\cline{1-3}
+× & × & ×\\\hline
+\mc{1}{|c|}{×} & \mc{1}{c|}{K-means Accuracy} & \mc{1}{c|}{SVM accuracy}\\\hline
+\mc{1}{|c|}{Traditional Sparse Coding} & \mc{1}{c|}{0.13} & \mc{1}{c|}{0.90}\\\hline
+\mc{1}{|c|}{LC-KSVD} & \mc{1}{c|}{0.78} & \mc{1}{c|}{0.91}\\\hline
+\mc{1}{|c|}{ML-CSC} & \mc{1}{c|}{0.11} & \mc{1}{c|}{0.94}\\\hline
+\mc{1}{|c|}{Sparse AE (Dense)} & \mc{1}{c|}{0.22} & \mc{1}{c|}{0.91}\\\hline
+\mc{1}{|c|}{Sparse AE(Convolution)} & \mc{1}{c|}{0.19} & \mc{1}{c|}{0.96}\\\hline
+\mc{1}{|c|}{LC-AutoEncoder} & \mc{1}{c|}{0.98} & \mc{1}{c|}{0.98}\\\hline
+\mc{1}{|c|}{LC-Sparse AutoEncoder} & \mc{1}{c|}{0.98} & \mc{1}{c|}{0.98}\\\hline
+\end{tabular}
+\end{center}
+}%
+
+On the first hand, Statistical and deep learning methods for discriminant feature extraction is an important open problem that requires the introduction of new methods to enable the increasing of correct classification for many problems as Speech recognition. 
+During this internship, we were able to compare different statistical methods based on the "Sparseland" hypothesis but also on the most recent deep learning methods.\\
+ All results are relatively close with the SVM classifier (approximatively 90\%). However, only Label consistency term brings good result for the K-means classifier (approximatively 90\% for the Label Consistency versus 10\% for the others) because the information from the label is brought in during the trainning. \\
+At the end of our research, we found that the LC-AutoEncoder and his sparse version allows good classification using both classifiers, SVM and K-means.\\
+
+In general, adding label information with a label consistency constraint, or more generally directly with the label information improves the results of various methods (Sparse Coding, AutoEncoder, Sparse AutoEncoder) and we hope to get the same improvement for the Mutli-layer Convolutional Sparse Coding with the model Label-Consistent ML-CSC. It remains a job to be done, but we now know that there will already be at least two persons to take it back and improve our results.\\
+
+On the other hand, this internship was an opportunity to discover in detail the world of research and all related challenges. The cross-disciplinary field between statistical approach and deep learning was very interesting, especially now, when the world is becoming more and more interested in deep learning. It is important for us to have the theoretical justifications of our models in order to be sure of the results they produce. This internship allowed us to obtain new skills, whether in optimization, machine learning (particularly deep learning) and signal processing.\\
+It was also interesting to take part in the life of a laboratory during this internship, to discover other people's work, to offer our opinion to help and to share our personal experiences.

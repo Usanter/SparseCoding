@@ -1,0 +1,53 @@
+This is BibTeX, Version 0.99d (TeX Live 2018/Arch Linux)
+Capacity: max_strings=100000, hash_size=100000, hash_prime=85009
+The top-level auxiliary file: SparseCoding.aux
+The style file: plain.bst
+Database file #1: efficient-sparse-coding-algorithms.bib
+Repeated entry---line 286 of file efficient-sparse-coding-algorithms.bib
+ : @article{8398588
+ :                 ,
+I'm skipping whatever remains of this entry
+Warning--empty booktitle in Rumelhart:1986:LIR:104279.104293
+Warning--empty booktitle in best-practices-for-convolutional-neural-networks-applied-to-visual-document-analysis
+You've used 17 entries,
+            2118 wiz_defined-function locations,
+            615 strings with 7596 characters,
+and the built_in function-call counts, 6545 in all, are:
+= -- 655
+> -- 289
+< -- 7
++ -- 113
+- -- 96
+* -- 473
+:= -- 1039
+add.period$ -- 54
+call.type$ -- 17
+change.case$ -- 99
+chr.to.int$ -- 0
+cite$ -- 19
+duplicate$ -- 256
+empty$ -- 517
+format.name$ -- 96
+if$ -- 1416
+int.to.chr$ -- 0
+int.to.str$ -- 17
+missing$ -- 16
+newline$ -- 88
+num.names$ -- 34
+pop$ -- 101
+preamble$ -- 1
+purify$ -- 82
+quote$ -- 0
+skip$ -- 195
+stack$ -- 0
+substring$ -- 442
+swap$ -- 73
+text.length$ -- 7
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 68
+warning$ -- 2
+while$ -- 59
+width$ -- 19
+write$ -- 195
+(There was 1 error message)

@@ -1,135 +1,91 @@
 \subsection{Inference of Sparse code}
-The original problem is a combinatorial problem (proven to be NP-hard). To solve this problem we use relaxation methods (then we can smooth the $L_0$ and use continuous optimization techniques) or greedy methods (then build the solution one non-zero element at time).
-\subsubsection{Compute $\alpha$ }
-%Inderence of sparse code=============================================
-\paragraph{Idea}
-Here we develop  step (1) of our algorithm.\\
-Assume we are given a dictionary matrix D, how do we compute $h(x^{(t)})$. We have to optimize:
-\begin{center}  Basic Pursuit:
-$l(x^{(t)}) = \frac{1}{2} \| x^{t}- D \alpha^{(t)} \|^{2}_{2} + \lambda \|\alpha^{(t)}\|_1 w.r.t. \alpha^{(t)}$\\ 
-\end{center} 
-Here we used relaxation method to switch from norm $l_0$ to $l_1$ know as the  Basic Pursuit (vs Matching Pursuit, a greedy method,  if we keep $l_0$ norm and find one atom at a time).\\
-We could use a gradient descent method to solve this minimization:\\
+
+We will focus here on the $\gamma$ calculation during the sparse coding step of learning algorithm (i.e. part (1) of algorithm 1). There are different ways to obtain the sparse coefficients: Some based on the $l_0$ norm, other on the $l_1$ norm.
+
+\subsubsection{$l_0$ norm based}
+Matching pursuit algorithm proposed in \cite{258082} intended to approximately solve the basic pursuit problem which is normally unacceptable in terms of calculation (if $D$ is large):
 \begin{center}
-$\Delta_{\alpha^{(t)}} l(x^{(t)}) = D^T (D \alpha^{(t)} - x^{(t)}) + \lambda sign(\alpha^{(t)})$
+ $\min\limits_{\gamma_i} \|\underset{r}{\underbrace{ x_i - D \hspace{3px} \gamma_i }}\|_2^2 \ s.t. \ \|\gamma_i \|_0 \leq L$\\
+ (with $r$ the residual)
 \end{center}
-The issue is $l_1$ norm is not differentiable at 0. The solution is : if $\alpha^{(t)}$ changes sign because of $l_1$ norm gradient then clamp to 0.That mean :
+Matching pursuit algorithm is a greedy algorithm which iteratively generates a sorted list of atom and weighting scalars that represent the sub-optimal solution. An improvement of this algorithm is called Orthogonal Matching Pursuit which Orthogonalizes all the chosen elements.
+\begin{algorithm}
+ \caption{Orthogonal Matching Pursuit Algorithm}
+\begin{algorithmic} 
+ \REQUIRE D, $x$
+ \STATE $\Gamma = \O$
+ \WHILE{$\|\gamma\|_0 < L$}
+    \STATE \textit{/* Pick the element that most reduces the objective */}
+    \STATE $e \leftarrow \underset{i \in \Gamma}{\argmin} \{ \underset{\gamma}{\min}\|x - D_{\Gamma \cup \{e\}} \gamma\|_2^2\}$ 
+    \STATE \textit{/* Update the active set */}
+    \STATE $\Gamma \leftarrow \Gamma \cup \{e\}$
+    \STATE \textit{ /* Update $\gamma$ and the residual */}
+    \STATE $\gamma \leftarrow (D_\Gamma^{\intercal} D_\Gamma)^{-1} D_\Gamma^{\intercal} x$
+    \STATE $r \leftarrow x - D\gamma_\Gamma$
+ \ENDWHILE
+\end{algorithmic}
+\end{algorithm}
 
-$\alpha^{(t)}_k = \alpha^{(t)}_k   - \alpha (D_{., k})^T (D \alpha^{(t)} - x^{(t)})$\\
-\indent if  sign($\alpha^{(t)}_k) \neq$ sign$(\alpha^{(t)}_k - \alpha \lambda$ sign$(\alpha^{(t)}_k) )$ then: $\alpha^{(t)}_k = 0$\\
-\indent else $\alpha^{(t)}_k = \alpha^{(t)}_k - \alpha \lambda$ sign$(\alpha^{(t)}_k)$
-\paragraph{ISTA (Iterative Shrinkage and Thresholding Algorithm)}
-:
-\begin{lstlisting}[language=Python,frame=single]
-initialize h 
-while h not_converged:
-    for each h_k in h:
-        h_k = h_k -alpha * transpose(D[:,k]) * (D*h - x)
-        h_k = shrink(h_k,alpha*lambda_coef)
-return h
-\end{lstlisting}
-Here \textbf{shrink(a,b) }= [..., sign$(a_i)$ max($|a_i| - b_i$, 0), ...]\\
 
-\subsubsection{Compute D}
-There are three algorithms used for  dictionary update.
-\paragraph{Algorithm 1: A gradient descent method}
-Our original problem is:
+\subsubsection{$l_1$ norm based}
+With this relaxation of the $l_0$ norm, we could use a gradient descent method to solve this optimization problem:\\
 \begin{center}
- $\min\limits_{D} \frac{1}{T} \sum_{t=1}^{T}  \min\limits_{\alpha^{(t)}} \frac{1}{2} \| x^{(t)} - D \hspace{3px} \alpha^{(t)} \|_2^2 + \lambda \|\alpha^{(t)} \|_1$\\
+$\Delta_{\gamma} l(x^{(t)}) = D^{\intercal} (D \gamma - x) + \lambda sign(\gamma)$
 \end{center}
-But here we assume $\alpha(x^{(t)})$ doesn't depend on D. So we must minimize:
+However,  it's well known that $l_1$ norm is not differentiable at 0, in this case, if $\gamma$ changes sign because of $l_1$ norm gradient then clamp to 0:
 \begin{center}
- $\min\limits_{D} \frac{1}{T} \sum_{t=1}^{T}  \min\limits_{\alpha^{(t)}} \frac{1}{2} \| x^{(t)} - D \hspace{3px} \alpha^{(t)} \|_2^2 $\\
+ Gradient descent step for each $k_th$ element of $\gamma$:\\\vspace{0.2cm}
+ $\gamma_k = \gamma_k - \alpha (D_{.,k})^{\intercal} (D \gamma - x)$\\\vspace{0.3cm}
+ Clamp to 0:\\ \vspace{0.2cm}
+  if  sign($\gamma_k) \neq$ sign$(\gamma_k - \alpha \lambda$ sign$(\gamma_k))$ then: $\gamma_k = 0$\\
+\indent else $\gamma_k = \gamma_k - \alpha \lambda$ sign$(\gamma_k)$
 \end{center}
-\begin{lstlisting}[language=Python,frame=single]
-while D not_converged:
-    # Perform gradient update of D
-    D = D - alpha * (1/T)* sum((x - D h)* tranpose(h))
-    # Renormalize the columns of D
-    for each column D[:,j]:
-        D[:,j] = (D[:,j] / norm(D[:,j]))
+This algorithm is called Iterative Shrinkage and Thresholding Algorithm:
+\begin{algorithm}
+ \caption{ISTA (Iterative Shrinkage and Thresholding Algorithm)}
+ \begin{algorithmic}
+  \STATE initialize $\gamma$ 
+  \WHILE{$\gamma$ has not converged}
+    \FORALL { $\gamma_k$ \textbf{in} $\gamma$ }
+        \STATE $\gamma_k = \gamma_k - \alpha (D[:,k])^{\intercal}  (D\gamma - x)$
+        \STATE $\gamma_k = shrink(\gamma_k,\alpha\lambda)$
+        \ENDFOR
+    \ENDWHILE
+\RETURN $\gamma$
+\STATE 
+\STATE Here \textbf{shrink(a,b) }= [..., sign$(a_i)$ max($|a_i| - b_i$, 0), ...]
 
-return D
-\end{lstlisting}
+ \end{algorithmic}
 
-\paragraph{Algorithm 2: Block-coordinate descent}
-We must minimize:
-\begin{center}
- $\min\limits_{D} \frac{1}{T} \sum_{t=1}^{T}  \min\limits_{\alpha^{(t)}} \frac{1}{2} \| x^{(t)} - D \hspace{3px} \alpha^{(t)} \|_2^2 $\\
-\end{center}
-The idea is to solve for each column $D_{., j}$ in cycle (that mean to optimize in one direction at time). For that we must set the gradient for $D_{., j}$ to zero.\\
-We have:
-\begin{center}
- $0 = \frac{1}{T}\sum_{t=1}^{T} (x^{(t)} - D h(x^{(t)}))$ $\alpha^{(t)}_{j}$\\ \vspace{0.4cm}
- We separe $D_{.,j}$ from the rest of D:\\
- $0 = \frac{1}{T}\sum_{t=1}^{T} (x^{(t)} - (\sum_{i \neq j}D_{.,i}$ $h(x^{(t)})_i$ $ )$  $ - (D_{.,j}$ $h(x^{(t)})_j)$ ) $ \alpha^{(t)}_{j}$\\ \vspace{0.4cm}
- Our aim is to find the value of $D_{.,j}$, we must isolate $D_{.,j}$ :\\
- $0 = \frac{1}{T} \sum_{t=1}^{T}(x^{(t)} \alpha^{(t)}_{j} - (\sum_{i \neq j}D_{.,i}$ $\alpha^{(t)}_i$ $\alpha^{t}_{j} )$  $ - (D_{.,j}$ $\alpha^{(t)2}_j))$\\ \vspace{0.2cm}
- 
-  $0 = (\sum_{t=1}^{T}(x^{(t)} \alpha^{(t)}_{j} - (\sum_{i \neq j}D_{.,i}$ $\alpha^{(t)}_i$ $\alpha^{t}_{j} )$  $) - ( \sum_{t=1}^{T}( D_{.,j}$ $\alpha^{(t)2}_j)))$\\ \vspace{0.2cm}
-  
-  $  \sum_{t=1}^{T}( D_{.,j}$ $\alpha^{(t)2}_j) = \sum_{t=1}^{T}(x^{(t)} \alpha^{(t)}_{j} - (\sum_{i \neq j}D_{.,i}$ $\alpha^{(t)}_i$ $\alpha^{t}_{j} )$  $) $\\  \vspace{0.2cm}
-  
-  $ D_{.,j}  \sum_{t=1}^{T} \alpha^{(t)2}_j = \sum_{t=1}^{T}(x^{(t)} \alpha^{(t)}_{j} - (\sum_{i \neq j}D_{.,i}$ $\alpha^{(t)}_i$ $\alpha^{t}_{j} )$  $) $\\ \vspace{0.2cm}
-  
-$ D_{.,j}  =\frac{1}{ \sum_{t=1}^{T} \alpha^{(t)2}_j} \sum_{t=1}^{T}(x^{(t)} \alpha^{(t)}_{j} - (\sum_{i \neq j}D_{.,i}$ $\alpha^{(t)}_i$ $\alpha^{t}_{j} )$  $) $\\ \vspace{0.2cm}
-
-$ D_{.,j}  =\underbrace{\frac{1}{ \sum_{t=1}^{T} \alpha^{(t)2}_j}}_{A_{j, j}} \underbrace{\sum_{t=1}^{T}(x^{(t)} \alpha^{(t)}_{j})}_{B_{., j}}  - \sum_{i \neq j}D_{., i}($ $\underbrace{\sum_{t=1}^{T} \alpha^{(t)}_i \alpha^{t}_{j} ) }_{A_{i,j}}$\\ \vspace{0.2cm}
-$D_{., j} = \frac{1}{A_{j, j}}(B_{., j} - D A_{., j} + D_{., j}A_{j, j})$
-\end{center}  
-\begin{lstlisting}[language=Python,frame=single]
-while D not_converged:
-    # For each column D[:,j] perform updates
-    for each column D[:,j]:
-        D[:,j] = (1/A[j, j])*(B[:, j] - D A[:, j] + D[:, j] A[j, j])
-        # Normalization
-        D[:,j] = D[:,j]/norm(D[:,j])
-
-return D
-\end{lstlisting}
-
-\paragraph{Algorithm 3:  Online learning algorithm}
-For large datasets we want to update D after  visiting each $x^{(t)}$. The solution is for each $x^{(t)}$ \cite{Mairal:2009:ODL:1553374.1553463} :
-\begin{itemize}
- \item[$\bullet$]  Perform inference of $h(x^{(t)})$ after visiting each $x^{(t)}$
- \item[$\bullet$]  Update running averages of the quantities required to update D: 
-        \begin{itemize}
-         \item B = $\beta B + (1 - \beta) x^{(t)}\alpha(x^{(t)})^T$
-         \item A = $\beta A + (1 - \beta)h(x^{(t)}) \alpha(x^{(t)})^T$
-        \end{itemize}
-\item[$\bullet$] Use current value of D as " warm start" to block-coordinate descent (warm start $\iff$ With the previous value of D)
-\end{itemize}
-( We have to specifie $\beta$ like a learning rate $\alpha$ (NB: this $\alpha$ isn't sparse matrix, it's a learning rate coefficient) in the gradient descent)
-
-\begin{lstlisting}[language=Python,frame=single]
-Initialize D # Not to 0 ! (To respect the constraint we define before)
-while D not_converged:
-    for each x:
-        Infer code h
-        #Update dictionary
-        A = A +  h * transpose(h)
-        B = B + x * transpose(h)
-        #Batch upgrade
-        #A = beta * A + ( 1 - beta ) * h * transpose(h)
-        #B = beta * B + ( 1 - beta ) * x * transpose(h)
-        while D not_converged:
-            for each column D[:,j]:
-                 D[:,j] = (1/A[j,j])*(B[:,j] - D A[:,j] + D[:,j] A[j,j])
-                # Normalization
-                D[:,j] = D[:,j]/norm(D[:,j]) 
-\end{lstlisting}
-\paragraph{Optimizing the Algorithm}
-In practice, it's possible to improve the convergence speed of this algorithm by using a Mini-batch extension: By drawing $\eta > 1 $ signals at each iteration instead of a single one. 
-\begin{center}
-  \[    \left\{
-                \begin{array}{ll}
-                  A_t  = \beta A_{t-1} + \sum_{i=1}^{\eta} \alpha_{t,i}\alpha_{t,i}^{T}\\
-                  B_t = \beta B_{t-1} + \sum_{i=1}^{\eta}x\alpha_{t,i}^{T}\\
-                \end{array}
-              \right.
-  \]
-\end{center}
-
-Then $\beta = \frac{\theta + 1 - \eta}{\theta +1}$, where $\theta = t \eta$ if $ t < \eta$ and $\eta^2 + t - \eta$ if $t \geq \eta$
-
-
+\end{algorithm}
+% 
+% The original problem is a combinatorial problem (proven to be NP-hard). To solve this problem we use relaxation methods (then we can smooth the $L_0$ and use continuous optimization techniques) or greedy methods (then build the solution one non-zero element at time).
+% \subsubsection{Compute $\alpha$ }
+% %Inderence of sparse code=============================================
+% \paragraph{Idea}f
+% Here we develop  step (1) of our algorithm.\\
+% Assume we are given a dictionary matrix D, how do we compute $h(x^{(t)})$. We have to optimize:
+% \begin{center}  Basic Pursuit:
+% $l(x^{(t)}) = \frac{1}{2} \| x^{t}- D \alpha^{(t)} \|^{2}_{2} + \lambda \|\alpha^{(t)}\|_1 w.r.t. \alpha^{(t)}$\\ 
+% \end{center} 
+% Here we used relaxation method to switch from norm $l_0$ to $l_1$ know as the  Basic Pursuit (vs Matching Pursuit, a greedy method,  if we keep $l_0$ norm and find one atom at a time).\\
+% We could use a gradient descent method to solve this minimization:\\
+% \begin{center}
+% $\Delta_{\alpha^{(t)}} l(x^{(t)}) = D^T (D \alpha^{(t)} - x^{(t)}) + \lambda sign(\alpha^{(t)})$
+% \end{center}
+% The issue is $l_1$ norm is not differentiable at 0. The solution is : if $\alpha^{(t)}$ changes sign because of $l_1$ norm gradient then clamp to 0.That mean :
+% 
+% $\alpha^{(t)}_k = \alpha^{(t)}_k   - \alpha (D_{., k})^T (D \alpha^{(t)} - x^{(t)})$\\
+% \indent if  sign($\alpha^{(t)}_k) \neq$ sign$(\alpha^{(t)}_k - \alpha \lambda$ sign$(\alpha^{(t)}_k) )$ then: $\alpha^{(t)}_k = 0$\\
+% \indent else $\alpha^{(t)}_k = \alpha^{(t)}_k - \alpha \lambda$ sign$(\alpha^{(t)}_k)$
+% \paragraph{ISTA (Iterative Shrinkage and Thresholding Algorithm)}
+% :
+% \begin{lstlisting}[language=Python,frame=single]
+% initialize h 
+% while h not_converged:
+%     for each h_k in h:
+%         h_k = h_k -alpha * transpose(D[:,k]) * (D*h - x)
+%         h_k = shrink(h_k,alpha*lambda_coef)
+% return h
+% \end{lstlisting}
+% Here \textbf{shrink(a,b) }= [..., sign$(a_i)$ max($|a_i| - b_i$, 0), ...]\\

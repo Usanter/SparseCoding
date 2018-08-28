@@ -1,6 +1,13 @@
-\subsection{One dictionary per class}
-The idea is to extend proposed method in  section \ref{sec:Clustering} by adding a term $\mathcal{Q}(D_i,D_j)$ that promotes incoherence between the differents dictionaries, e.g. this term encourage dictionaries to  be independent as possible :
+\section{One dictionary per class}
+Suppose we have $G$ classes. When we want to create a discriminative dictionary for each class from our dataset, the simple way to do this is to learn $G$ dictionaries, one for each $G$ class. Indeed, we can hope that during the training, each dictionary will learn all specificities from all data of its associated class.\\
+Mathematically, this method is similar to the traditional sparse coding, except that we don't form a unique dictionary on all data, but we form $G$ dictionaries on data of the same label as the dictionary.\\
+
+% https://ieeexplore.ieee.org/document/5539964/
+In addition, to ensure that the dictionaries learn specific pieces of information of their classes,  \cite{5539964} proposed to add to the traditional cost function a new term $\mathcal{Q}(D_i,D_j)$ that promotes incoherence between the different dictionaries, i.e. this term encourages dictionaries to  be more independent as possible :\\
 \begin{center}
- $\underset{D_i, C_i}{\min} \sum_{i=1}^{K} \sum_{x_j \in C_i} \mathcal{R}(x_j,D_i) + \eta \sum_{i \neq j} \mathcal{Q}(D_i,D_j)$
+ $\underset{D_i, C_i}{\min} \sum_{i=1}^{G} \sum_{x_j \in C_i} \|x_j - D_i\gamma_j\|^2_2 + \lambda \|\gamma_j\|_0+ \eta \sum_{i \neq j} \mathcal{Q}(D_i,D_j)$
 \end{center}
-For example we can take $\mathcal{Q}(D_i,D_j) = \|D^T_iD_j\|^2_F $ with F denotes Frobenius norm.
+For example, it is possible to take $\mathcal{Q}(D_i,D_j) = \|D^T_iD_j\|^2_F $ with F denotes Frobenius norm.\\
+Using this method of one dictionary per class to predict the class of an entry signal, we only have to find which dictionary minimizes the cost function for this signal, and the associated dictionary class will be the prediction.\\
+This method is effective when the number of classes is small. However, when the number of classes is large, this method will be time and memory consuming.\\
+In the particular case of speech recognition, the number of phonemes (in the case of the French language) is 36. We concluded that we cannot use this method of discriminative sparse coding.  That is why we present the label consistent sparse coding, another state-of-the-art method.
