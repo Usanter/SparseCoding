@@ -14,7 +14,7 @@ H.~Bristow, A.~Eriksson, and S.~Lucey.
   Recognition}, pages 391--398, June 2013.
 
 \bibitem{305222}
-Scott~Shaobing Chen, David~L. Donoho, and Michael~A. Saunders.
+S.~Shaobing Chen, D.~L. Donoho, and M.~A. Saunders.
 \newblock Atomic decomposition by basis pursuit.
 \newblock {\em SIAM J. Sci. Comput.}, 20(1):33--61, December 1998.
 
@@ -26,24 +26,24 @@ Z.~Jiang, Z.~Lin, and L.~S. Davis.
   35(11):2651--2664, Nov 2013.
 
 \bibitem{Mairal:2009:ODL:1553374.1553463}
-Julien Mairal, Francis Bach, Jean Ponce, and Guillermo Sapiro.
+Mairal, Bach, Ponce, and Sapiro.
 \newblock Online dictionary learning for sparse coding.
 \newblock In {\em Proceedings of the 26th Annual International Conference on
   Machine Learning}, ICML '09, pages 689--696, New York, NY, USA, 2009. ACM.
 
 \bibitem{DBLP:journals/corr/MakhzaniF13}
-Alireza Makhzani and Brendan~J. Frey.
+A.~Makhzani and B.~J. Frey.
 \newblock k-sparse autoencoders.
 \newblock {\em CoRR}, abs/1312.5663, 2013.
 
 \bibitem{258082}
-S.~G. Mallat and Zhifeng Zhang.
+S.~G. Mallat and Z.~Zhang.
 \newblock Matching pursuits with time-frequency dictionaries.
 \newblock {\em IEEE Transactions on Signal Processing}, 41(12):3397--3415, Dec
   1993.
 
 \bibitem{Olshausen97sparsecoding}
-Bruno~A. Olshausen and David~J. Fieldt.
+B.~A. Olshausen and D.~J. Fieldt.
 \newblock Sparse coding with an overcomplete basis set: a strategy employed by
   v1.
 \newblock {\em Vision Research}, 37:3311--3325, 1997.
@@ -70,29 +70,29 @@ D.~E. Rumelhart, G.~E. Hinton, and R.~J. Williams.
   318--362. MIT Press, Cambridge, MA, USA, 1986.
 
 \bibitem{best-practices-for-convolutional-neural-networks-applied-to-visual-document-analysis}
-Patrice~Y. Simard, Dave Steinkraus, and John Platt.
+P.~Y. Simard, D.~Steinkraus, and J.~Platt.
 \newblock Best practices for convolutional neural networks applied to visual
   document analysis.
 \newblock Institute of Electrical and Electronics Engineers, Inc., August 2003.
 
 \bibitem{DBLP:journals/corr/abs-1708-08705}
-Jeremias Sulam, Vardan Papyan, Yaniv Romano, and Michael Elad.
+J.~Sulam, V.~Papyan, Y.~Romano, and M.~Elad.
 \newblock Multi-layer convolutional sparse modeling: Pursuit and dictionary
   learning.
 \newblock {\em CoRR}, abs/1708.08705, 2017.
+
+\bibitem{wohlberg-2017-sporco}
+B.~Wohlberg.
+\newblock {SPORCO}: {A} {P}ython package for standard and convolutional sparse
+  representations.
+\newblock In {\em Proceedings of the 15th Python in Science Conference}, pages
+  1--8, Austin, TX, USA, July 2017.
 
 \bibitem{wohlberg-2016-sporco}
 Brendt Wohlberg.
 \newblock {SP}arse {O}ptimization {R}esearch {CO}de ({SPORCO}).
 \newblock Software library available from
   http://purl.org/brendt/software/sporco, 2016.
-
-\bibitem{wohlberg-2017-sporco}
-Brendt Wohlberg.
-\newblock {SPORCO}: {A} {P}ython package for standard and convolutional sparse
-  representations.
-\newblock In {\em Proceedings of the 15th Python in Science Conference}, pages
-  1--8, Austin, TX, USA, July 2017.
 
 \bibitem{8294264}
 Z.~You, R.~Raich, X.~Z. Fern, and J.~Kim.
@@ -101,7 +101,7 @@ Z.~You, R.~Raich, X.~Z. Fern, and J.~Kim.
   2018.
 
 \bibitem{Zheng:2016:ESD:2939672.2939824}
-Guoqing Zheng, Yiming Yang, and Jaime Carbonell.
+Zheng, Yang, and Carbonell.
 \newblock Efficient shift-invariant dictionary learning.
 \newblock In {\em Proceedings of the 22Nd ACM SIGKDD International Conference
   on Knowledge Discovery and Data Mining}, KDD '16, pages 2095--2104, New York,

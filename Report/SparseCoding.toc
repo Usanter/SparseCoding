@@ -4,21 +4,20 @@
 \contentsline {section}{\numberline {1.3}Organization}{5}{section.1.3}
 \contentsline {chapter}{\numberline {2}Traditional Sparse Coding}{6}{chapter.2}
 \contentsline {section}{\numberline {2.1}\textit {Sparseland}}{6}{section.2.1}
-\contentsline {subsection}{\numberline {2.1.1}The idea behind \textit {Sparseland}}{6}{subsection.2.1.1}
 \contentsline {section}{\numberline {2.2}Mathematical formulation}{6}{section.2.2}
 \contentsline {section}{\numberline {2.3}Learning step}{8}{section.2.3}
 \contentsline {subsection}{\numberline {2.3.1}Inference of Sparse code}{8}{subsection.2.3.1}
-\contentsline {subsubsection}{$l_0$ norm based}{8}{section*.5}
-\contentsline {subsubsection}{$l_1$ norm based}{8}{section*.6}
+\contentsline {subsubsection}{$l_0$ norm based}{8}{section*.6}
+\contentsline {subsubsection}{$l_1$ norm based}{8}{section*.7}
 \contentsline {subsection}{\numberline {2.3.2}Inference of Dictionary}{9}{subsection.2.3.2}
-\contentsline {subsubsection}{Algorithm 1: Gradient Descent }{9}{section*.7}
-\contentsline {subsubsection}{Algorithm 2: Block-coordinate descent}{10}{section*.9}
-\contentsline {subsubsection}{Algorithm 3: Online learning algorithm}{11}{section*.11}
-\contentsline {paragraph}{Optimizing the Algorithm}{11}{section*.12}
-\contentsline {subsubsection}{Algorithm 4: K-SVD}{12}{section*.13}
+\contentsline {subsubsection}{Algorithm 1: Gradient Descent }{9}{section*.8}
+\contentsline {subsubsection}{Algorithm 2: Block-coordinate descent}{10}{section*.10}
+\contentsline {subsubsection}{Algorithm 3: Online learning algorithm}{11}{section*.12}
+\contentsline {paragraph}{Optimizing the Algorithm}{11}{section*.13}
+\contentsline {subsubsection}{Algorithm 4: K-SVD}{12}{section*.14}
 \contentsline {section}{\numberline {2.4}Dataset and Toolbox}{13}{section.2.4}
 \contentsline {subsection}{\numberline {2.4.1}MNIST}{13}{subsection.2.4.1}
-\contentsline {subsubsection}{SPAMS}{13}{section*.15}
+\contentsline {subsubsection}{SPAMS}{13}{section*.16}
 \contentsline {section}{\numberline {2.5}Experimentation details}{14}{section.2.5}
 \contentsline {subsection}{\numberline {2.5.1}Application of traditional Coding on MNIST}{14}{subsection.2.5.1}
 \contentsline {subsection}{\numberline {2.5.2}Classification for traditional Sparse Coding}{15}{subsection.2.5.2}
@@ -32,19 +31,17 @@
 \contentsline {subsection}{\numberline {3.3.2}Classification for Label-Consistent K-SVD}{20}{subsection.3.3.2}
 \contentsline {chapter}{\numberline {4}Convolutional Sparse Coding}{21}{chapter.4}
 \contentsline {section}{\numberline {4.1}Idea}{21}{section.4.1}
-\contentsline {subsection}{\numberline {4.1.1}Problem formulation}{22}{subsection.4.1.1}
 \contentsline {section}{\numberline {4.2}Inference of CSC}{23}{section.4.2}
 \contentsline {subsection}{\numberline {4.2.1}Augmented Lagrangian}{23}{subsection.4.2.1}
 \contentsline {subsection}{\numberline {4.2.2}Quad-decomposition of the objective}{23}{subsection.4.2.2}
-\contentsline {subsubsection}{Subproblem z}{23}{section*.26}
-\contentsline {subsubsection}{Subproblem t}{23}{section*.27}
-\contentsline {subsubsection}{Subproblem d}{24}{section*.28}
-\contentsline {subsubsection}{Subproblem s}{24}{section*.29}
+\contentsline {subsubsection}{Subproblem z}{23}{section*.28}
+\contentsline {subsubsection}{Subproblem t}{23}{section*.29}
+\contentsline {subsubsection}{Subproblem d}{24}{section*.30}
+\contentsline {subsubsection}{Subproblem s}{24}{section*.31}
 \contentsline {subsection}{\numberline {4.2.3}Lagrange Multiplier Update}{24}{subsection.4.2.3}
 \contentsline {subsection}{\numberline {4.2.4}Penalty update}{24}{subsection.4.2.4}
 \contentsline {section}{\numberline {4.3}SPORCO}{24}{section.4.3}
 \contentsline {section}{\numberline {4.4}Experimentation details}{26}{section.4.4}
-\contentsline {subsection}{\numberline {4.4.1}Application of Convolutional Sparse Coding on MNIST}{26}{subsection.4.4.1}
 \contentsline {chapter}{\numberline {5}Discriminative Convolutional Sparse Coding}{28}{chapter.5}
 \contentsline {section}{\numberline {5.1}ML-CSC}{28}{section.5.1}
 \contentsline {section}{\numberline {5.2}Tests details}{29}{section.5.2}
@@ -57,8 +54,8 @@
 \contentsline {section}{\numberline {6.3}Labels Consistent AutoEncoder}{33}{section.6.3}
 \contentsline {section}{\numberline {6.4}Experimentation details}{34}{section.6.4}
 \contentsline {subsection}{\numberline {6.4.1}Application of different Autoencoder on MNIST}{34}{subsection.6.4.1}
-\contentsline {subsubsection}{K Sparse Autoencoder}{34}{section*.39}
-\contentsline {subsubsection}{Labels Consistent Autoencoder}{34}{section*.42}
-\contentsline {subsubsection}{Label Consistent Sparse Autoencoder}{34}{section*.44}
+\contentsline {subsubsection}{K Sparse Autoencoder}{34}{section*.42}
+\contentsline {subsubsection}{Labels Consistent Autoencoder}{34}{section*.45}
+\contentsline {subsubsection}{Label Consistent Sparse Autoencoder}{34}{section*.47}
 \contentsline {subsection}{\numberline {6.4.2}Classification for Autoencoder}{35}{subsection.6.4.2}
 \contentsline {chapter}{\numberline {7}Conclusion}{36}{chapter.7}

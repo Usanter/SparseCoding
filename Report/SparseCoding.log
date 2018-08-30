@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.14159265-2.6-0.99999 (TeX Live 2018/Arch Linux) (preloaded format=xelatex 2018.7.25)  27 AUG 2018 14:57
+This is XeTeX, Version 3.14159265-2.6-0.99999 (TeX Live 2018/Arch Linux) (preloaded format=xelatex 2018.7.25)  30 AUG 2018 14:25
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1610,13 +1610,13 @@ Package atveryend Info: Empty hook `AfterLastShipout' on input line 221.
 Package atveryend Info: Empty hook `AtVeryEndDocument' on input line 221.
 Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 221.
 Package rerunfilecheck Info: File `SparseCoding.out' has not changed.
-(rerunfilecheck)             Checksum: CF99558E8014EC1A3D79C0235B0933C1.
+(rerunfilecheck)             Checksum: F3A7ACC91A7BF1B4243A93883C6E17CB.
  ) 
 Here is how much of TeX's memory you used:
- 33869 strings out of 492970
- 633392 string characters out of 6139408
- 690503 words of memory out of 5000000
- 37356 multiletter control sequences out of 15000+600000
+ 33866 strings out of 492970
+ 633353 string characters out of 6139408
+ 690179 words of memory out of 5000000
+ 37353 multiletter control sequences out of 15000+600000
  551098 words of font info for 73 fonts, out of 8000000 for 9000
  1348 hyphenation exceptions out of 8191
  54i,15n,75p,10422b,862s stack positions out of 5000i,500n,10000p,200000b,80000s

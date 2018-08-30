@@ -1,5 +1,5 @@
 \section{Experimentation details}
-\subsection{Application of Convolutional Sparse Coding on MNIST}
+\subsection*{Application of Convolutional Sparse Coding on MNIST}
 In this section, we show the result of applying unsupervised Convolutional Sparse Coding (denoted as CSC) previously presented in MNIST dataset.\\
 Here, it's useless to have more than $2* Signal\_size$ not represent the number of atoms but its represent the number of filters, and we need fewer filters than atoms in the traditional Sparse Coding. Arbitrationally, we chose 64 filters of (8 $\times$ 8), this is not recommended to use filters larger than (7$\times$7) for MNIST dataset  \cite{best-practices-for-convolutional-neural-networks-applied-to-visual-document-analysis} however in our case we want to get more discriminant filters, so using larger filters is the solution.\\
 

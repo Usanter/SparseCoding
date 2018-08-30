@@ -7,11 +7,39 @@ Repeated entry---line 286 of file efficient-sparse-coding-algorithms.bib
  : @article{8398588
  :                 ,
 I'm skipping whatever remains of this entry
+Name 1 in "Mairal, and Bach, and Ponce, and Sapiro," has a comma at the end for entry Mairal:2009:ODL:1553374.1553463
+while executing---line 1049 of file plain.bst
+Name 2 in "Mairal, and Bach, and Ponce, and Sapiro," has a comma at the end for entry Mairal:2009:ODL:1553374.1553463
+while executing---line 1049 of file plain.bst
+Name 3 in "Mairal, and Bach, and Ponce, and Sapiro," has a comma at the end for entry Mairal:2009:ODL:1553374.1553463
+while executing---line 1049 of file plain.bst
+Name 4 in "Mairal, and Bach, and Ponce, and Sapiro," has a comma at the end for entry Mairal:2009:ODL:1553374.1553463
+while executing---line 1049 of file plain.bst
+Name 1 in "Zheng, and Yang, and Carbonell," has a comma at the end for entry Zheng:2016:ESD:2939672.2939824
+while executing---line 1049 of file plain.bst
+Name 2 in "Zheng, and Yang, and Carbonell," has a comma at the end for entry Zheng:2016:ESD:2939672.2939824
+while executing---line 1049 of file plain.bst
+Name 3 in "Zheng, and Yang, and Carbonell," has a comma at the end for entry Zheng:2016:ESD:2939672.2939824
+while executing---line 1049 of file plain.bst
+Name 1 in "Mairal, and Bach, and Ponce, and Sapiro," has a comma at the end for entry Mairal:2009:ODL:1553374.1553463
+while executing---line 1090 of file plain.bst
+Name 2 in "Mairal, and Bach, and Ponce, and Sapiro," has a comma at the end for entry Mairal:2009:ODL:1553374.1553463
+while executing---line 1090 of file plain.bst
+Name 3 in "Mairal, and Bach, and Ponce, and Sapiro," has a comma at the end for entry Mairal:2009:ODL:1553374.1553463
+while executing---line 1090 of file plain.bst
+Name 4 in "Mairal, and Bach, and Ponce, and Sapiro," has a comma at the end for entry Mairal:2009:ODL:1553374.1553463
+while executing---line 1090 of file plain.bst
 Warning--empty booktitle in Rumelhart:1986:LIR:104279.104293
 Warning--empty booktitle in best-practices-for-convolutional-neural-networks-applied-to-visual-document-analysis
+Name 1 in "Zheng, and Yang, and Carbonell," has a comma at the end for entry Zheng:2016:ESD:2939672.2939824
+while executing---line 1090 of file plain.bst
+Name 2 in "Zheng, and Yang, and Carbonell," has a comma at the end for entry Zheng:2016:ESD:2939672.2939824
+while executing---line 1090 of file plain.bst
+Name 3 in "Zheng, and Yang, and Carbonell," has a comma at the end for entry Zheng:2016:ESD:2939672.2939824
+while executing---line 1090 of file plain.bst
 You've used 17 entries,
             2118 wiz_defined-function locations,
-            615 strings with 7596 characters,
+            616 strings with 7497 characters,
 and the built_in function-call counts, 6545 in all, are:
 = -- 655
 > -- 289
@@ -50,4 +78,4 @@ warning$ -- 2
 while$ -- 59
 width$ -- 19
 write$ -- 195
-(There was 1 error message)
+(There were 15 error messages)
