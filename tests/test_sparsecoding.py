@@ -1,3 +1,4 @@
+import json
 import subprocess
 import sys
 import tempfile
@@ -82,6 +83,24 @@ class SparseCodingTests(unittest.TestCase):
             for artifact in ("dictionary.npy", "codes.npy", "costs.npy", "dictionary.png"):
                 self.assertTrue((Path(tmpdir) / artifact).exists())
 
+
+    def test_mnist_notebook_demo_is_present_and_documented(self):
+        notebook_path = CODE_DIR / "MNIST Demo.ipynb"
+        notebook = json.loads(notebook_path.read_text(encoding="utf-8"))
+        joined_sources = "\n".join(
+            "".join(cell.get("source", []))
+            for cell in notebook["cells"]
+        )
+
+        self.assertIn("IRIT (Samova team)", joined_sources)
+        self.assertIn("fetch_openml("mnist_784"", joined_sources)
+        self.assertIn("from SparseCoding import compute_cost, sparse_coding", joined_sources)
+
+    def test_readme_mentions_internship_context_and_notebook_demo(self):
+        readme_text = (REPO_ROOT / "README.md").read_text(encoding="utf-8")
+
+        self.assertIn("master's internship work completed at IRIT in the Samova team", readme_text)
+        self.assertIn("/home/runner/work/SparseCoding/SparseCoding/Code/MNIST Demo.ipynb", readme_text)
 
 if __name__ == "__main__":
     unittest.main()
