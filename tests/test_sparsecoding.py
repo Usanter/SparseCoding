@@ -100,7 +100,7 @@ class SparseCodingTests(unittest.TestCase):
         readme_text = (REPO_ROOT / "README.md").read_text(encoding="utf-8")
 
         self.assertIn("master's internship work completed at IRIT in the Samova team", readme_text)
-        self.assertIn("/home/runner/work/SparseCoding/SparseCoding/Code/MNIST Demo.ipynb", readme_text)
+        self.assertIn("Code/MNIST Demo.ipynb", readme_text)
 
 if __name__ == "__main__":
     unittest.main()

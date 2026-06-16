@@ -55,7 +55,7 @@ The command writes these files into `demo_output/`:
 
 1. Install Jupyter if needed: `pip install notebook`
 2. From `<repository-root>`, run `jupyter notebook`
-3. Open `/home/runner/work/SparseCoding/SparseCoding/Code/MNIST Demo.ipynb`
+3. Open `Code/MNIST Demo.ipynb`
 
 The notebook downloads MNIST from OpenML on first use, trains a compact dictionary on a small subset, and visualizes learned atoms plus reconstructions.
 
@@ -105,4 +105,4 @@ python -m unittest discover -s tests -v
 
 ## Demo summary
 
-The supported command-line demo trains on the scikit-learn digits dataset and produces reusable artifacts without requiring notebook execution. For an interactive walkthrough tied more closely to the original internship context, open `/home/runner/work/SparseCoding/SparseCoding/Code/MNIST Demo.ipynb`.
+The supported command-line demo trains on the scikit-learn digits dataset and produces reusable artifacts without requiring notebook execution. For an interactive walkthrough tied more closely to the original internship context, open `Code/MNIST Demo.ipynb`.
