@@ -21,17 +21,17 @@ The repository also contains several historical notebooks exploring traditional 
 ### Recommended setup
 
 ```bash
-cd /home/runner/work/SparseCoding/SparseCoding
+cd <repository-root>
 python -m venv .venv
 source .venv/bin/activate
 pip install --upgrade pip
-pip install -r /home/runner/work/SparseCoding/SparseCoding/Code/requirements.txt
+pip install -r Code/requirements.txt
 ```
 
 ### Optional package metadata check
 
 ```bash
-cd /home/runner/work/SparseCoding/SparseCoding/Code
+cd Code
 python setup.py --name
 ```
 
@@ -40,7 +40,7 @@ python setup.py --name
 ### Run the demo
 
 ```bash
-cd /home/runner/work/SparseCoding/SparseCoding
+cd <repository-root>
 python Code/demo.py --demo --output-dir demo_output
 ```
 
@@ -83,13 +83,13 @@ The `sparse_coding()` function also accepts:
 Run the test suite with:
 
 ```bash
-cd /home/runner/work/SparseCoding/SparseCoding
+cd <repository-root>
 python -m unittest discover -s tests -v
 ```
 
 ## Troubleshooting
 
-- If `python setup.py --name` fails, run it from `/home/runner/work/SparseCoding/SparseCoding/Code` so the local packaging files are in scope.
+- If `python setup.py --name` fails, run it from `Code/` so the local packaging files are in scope.
 - If matplotlib cannot open a display, use the demo as provided; it renders plots with the non-interactive `Agg` backend.
 - If you want to explore the old notebooks, expect additional manual dependency work for packages such as `spams`, `sporco`, and legacy TensorFlow APIs.
 - Very large `--atoms` values relative to the 64-feature digits dataset are rejected to avoid unstable demo runs.
