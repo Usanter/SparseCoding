@@ -93,7 +93,7 @@ class SparseCodingTests(unittest.TestCase):
         )
 
         self.assertIn("IRIT (Samova team)", joined_sources)
-        self.assertIn("fetch_openml("mnist_784"", joined_sources)
+        self.assertIn("fetch_openml(\"mnist_784\"", joined_sources)
         self.assertIn("from SparseCoding import compute_cost, sparse_coding", joined_sources)
 
     def test_readme_mentions_internship_context_and_notebook_demo(self):
