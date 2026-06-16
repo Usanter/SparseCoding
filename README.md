@@ -95,14 +95,16 @@ cd <repository-root>
 python -m unittest discover -s tests -v
 ```
 
-## Troubleshooting
+## Citation
 
-- If `python setup.py --name` fails, run it from `Code/` so the local packaging files are in scope.
-- If matplotlib cannot open a display, use the demo as provided; it renders plots with the non-interactive `Agg` backend.
-- If the MNIST notebook cannot download data, retry with network access enabled; it uses `sklearn.datasets.fetch_openml` and caches the dataset locally after the first successful run.
-- If you want to explore the old notebooks, expect additional manual dependency work for packages such as `spams`, `sporco`, and legacy TensorFlow APIs.
-- Very large `--atoms` values relative to the 64-feature digits dataset are rejected to avoid unstable demo runs.
+This code is made available for research and educational use. If you use this repository or build on this work, please cite the following paper:
 
-## Demo summary
-
-The supported command-line demo trains on the scikit-learn digits dataset and produces reusable artifacts without requiring notebook execution. For an interactive walkthrough tied more closely to the original internship context, open `Code/MNIST Demo.ipynb`.
+```bibtex
+@inproceedings{rolland2019label,
+  title={Label-consistent sparse auto-encoders},
+  author={Rolland, Thomas and Basarab, Adrian and Pellegrini, Thomas},
+  booktitle={Workshop on Signal Processing with Adaptative Sparse Structured Representations (SPARS 2019)},
+  pages={1--2},
+  year={2019}
+}
+```
