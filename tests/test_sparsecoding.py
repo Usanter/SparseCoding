@@ -79,7 +79,8 @@ class SparseCodingTests(unittest.TestCase):
             )
 
             self.assertIn("Demo artifacts written to:", completed.stdout)
-            self.assertTrue((Path(tmpdir) / "dictionary.npy").exists())
+            for artifact in ("dictionary.npy", "codes.npy", "costs.npy", "dictionary.png"):
+                self.assertTrue((Path(tmpdir) / artifact).exists())
 
 
 if __name__ == "__main__":

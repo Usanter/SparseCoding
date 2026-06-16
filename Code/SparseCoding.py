@@ -3,7 +3,7 @@ from __future__ import annotations
 import argparse
 import math
 from pathlib import Path
-from typing import Iterable, Tuple
+from typing import Iterable
 
 import numpy as np
 from sklearn import datasets
@@ -132,7 +132,7 @@ def sparse_coding(
     tolerance: float = DEFAULT_TOLERANCE,
     random_state: int | None = DEFAULT_RANDOM_STATE,
     return_costs: bool = False,
-) -> Tuple[np.ndarray, np.ndarray] | Tuple[np.ndarray, np.ndarray, np.ndarray]:
+) -> tuple[np.ndarray, np.ndarray] | tuple[np.ndarray, np.ndarray, np.ndarray]:
     """Learn a dictionary and sparse codes for samples arranged as (features, samples)."""
     samples = _as_2d_float_array(x, "x")
     n_features, n_samples = samples.shape
