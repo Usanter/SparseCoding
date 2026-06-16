@@ -1,259 +1,305 @@
-#Imports
-import numpy as np
-import sys
+from __future__ import annotations
+
+import argparse
 import math
-import matplotlib.pyplot as plt
+from pathlib import Path
+from typing import Iterable, Tuple
+
+import numpy as np
 from sklearn import datasets
 
-#==============================================
-## Dimensions:
-## x - R^(m  n)
-## D - R^(m  k)
-##    with k columns referred to nb of  atoms
-##=============================================
 
-#======================MISC FUNCTIONS============================================
-# Function which compute the "convergence" about 2 matrix
-def Convergence(Matrix_before,Matrix_after):
-    '''
-    Check how close are the 2 input matrix
-    :param Matrix_before: Input Matrix 1
-    :param Matrix_after: Input Matrix 2
-    :return: True if they are close, false otherwise
-    '''
-    #sys.stdout.write("\rOpti D " +str(np.sum(abs(Matrix_before - Matrix_after))))
-    #sys.stdout.flush()
-    return np.sum(abs(Matrix_before - Matrix_after)) > 0.1
-
-# Function which help to avoid the non-division by 0 in the h's gradient descent
-def shrink(h,coef):
-    '''
-    Function to shrink the input by a coef, use to help to avoid the non-division by 0 in the gradient descent
-    :param h: Input Matrix
-    :param coef: Coef use to shrink
-    :return: shrinked h
-    '''
-    result = np.array([])
-
-    # for all elements sign(hi) * max( |hi| - coef, 0)
-    for i in range(len(h)):
-
-        h[i] = np.sign(h[i])* max(np.abs(h[i]) - coef, 0)
-
-    return h
-
-# Function for h gradient descent
-def ISTA(h,D,x,k,alpha = 0.09,lambda_coef = 0.05):
-    '''
-    ISA function, gradient descent + shrinkage function
-    :param h: Sparse coefficients matrix
-    :param D: Dictionary
-    :param x: Input data
-    :param k: Number of D's atoms
-    :param alpha: by default 0.09
-    :param lambda_coef: by default 0.05
-    :return: return h, sparse coefficients matrix
-    '''
-    #lambda_coef = 500
-    lambda_coef = 1.2/math.sqrt(len(x)) # Cf Online Dictionary learning for Sparse Coding Doc
-    not_converged = True
-
-    it = 1
-    # While h^(t) has not converged
-    while(not_converged and it < 1000):
-        h_before = np.array(h)
-
-        for i in range(k):
-
-            #h^(t) <= h^(t) - alpha D' (D h^(t) -x^(t))
-
-            h[i] = h[i] - alpha * (np.transpose(D[:,i]).dot(D.dot(h) -x))
-            # h^(t) <= shrink (h^(t), alpha lamdba)
-            h[i] = shrink(h[i],alpha * lambda_coef)
-
-        #Check if convergence
-        not_converged = Convergence(h_before,h)
-        it = it + 1
-
-    # return h^(t)
-    return h
-
-# Compute current cost
-def compute_cost(x,D,h,lambda_coef = 0.2):
-    '''
-    Compute cost function with a fixed D, h and X
-    :param x: Input data
-    :param D: Dictionary
-    :param h: Sparse Coef
-    :param lambda_coef: by default 0.2
-    :return: Cost
-    '''
-
-        [_,n] = np.shape(x)
-        return (1/n)* ( (1/2)*np.linalg.norm(x - D.dot(h))**2 + lambda_coef*np.linalg.norm((h),ord=1))
-
-#==============================SPARSE CODING ALGORITHM======================================
-# Sparse coding  using Online learning algorithm
-# def sparse_coding_online(x,k = 265,beta=0.3):#NOTE: Check how to make ISTA with only 1 x_t (dimension pb)
-#     [m,n] = np.shape(x)
-#     #Initial dictionary (consisting of unit normm atoms sampled from the unit sphere)
-#     D = np.random.rand(m,k)
-#
-#     print("SHAPE ",np.shape(D))
-#
-#     print("D",D[:,1])
-#     print("X",np.shape(x))
-#     #Initial coef
-#     h = np.zeros((k,n))
-#     A = np.zeros((k,k))
-#     B = np.zeros((len(x),k))
-#     # While  D not_converged
-#     not_converged = True
-#     iteration = 1
-#     cost = np.array(compute_cost(x,D,h))
-#     fig = plt.figure()
-#     plt.plot(cost,'r')
-#     #plt.hold(True)
-#     #plt.show()
-#     for x_t in np.transpose(x):
-#         print("\nIteration ",iteration)
-#         print("==============================")
-#         #Infer code h
-#         h = ISTA(h,D,x_t,k,0.01)
-#         print(" ")
-#         #Update dictionary:
-#         # B = beta * B + (1 - beta)  * transpose(h)* x
-#         #B = beta * B + ( 1 - beta) *  x_t.dot(np.transpose(h))
-#         # A = beta * A + (1 - beta) * transpose(h)* h
-#         #A = beta * A + (1 - beta) * h.dot(np.transpose(h))
-#
-#         A = A + h.dot(np.transpose(h))
-#         B = B + x.dot(np.transpose(h))
-#         # fileA = open('A','wb')
-#         #np.save(fileA,A)
-#         # fileA = open('B','wb')
-#         #np.save(fileA,B)
-#
-#         # While D not_converged:
-#         D_not_converged = True
-#         while(D_not_converged):
-#             D_before2 = np.array(D)
-#             for j in range(k):
-#             # For each column D[:,j]
-#
-#                 # Update for the column j
-#                 D[:,j] = (1/A[j,j]+0.0000001) * (B[:,j] - (D.dot(A[:,j])) + (D[:,j].dot(A[j,j])))
-#
-#                 # Normalize
-#                 D[:,j] = D[:,j] / (np.linalg.norm(D[:,j]))
-#             D_not_converged = Convergence(D_before2,D)
-#         iteration = iteration +1
-#         cost =  np.append(cost,compute_cost(x,D,h))
-#
-#         plt.plot(cost,'r')
-#     plt.show()
-#     return [D,h]
-
-# Sparse coding using Block-coordinate descent algorithm
-def sparse_coding(x,k = 128):
-    '''
-    Compute the Dictionary Learning and Sparse coding method to find a Dictionary of atoms and
-    sparse coefs to reconstruct the input data x
-    :param x: Input data
-    :param k: Number of D's atoms
-    :return: Optimal Dictionary and Sparse Coef for a given input data X
-    '''
-
-    #Init
-    not_converged =  True
-    it = 1
-    [m,n] = np.shape(x)
-
-    #Initial dictionary (consisting of unit normm atoms sampled from the unit sphere)
-    D = np.random.rand(m,k)
-
-    #Initial coef
-    h = np.zeros((k,n))
+DEFAULT_ALPHA = 0.05
+DEFAULT_LAMBDA = 0.15
+DEFAULT_MAX_ITER = 15
+DEFAULT_ISTA_MAX_ITER = 75
+DEFAULT_TOLERANCE = 1e-4
+DEFAULT_RANDOM_STATE = 0
 
 
-    #Print initial cost
-    cost = np.array(compute_cost(x,D,h))
-    fig = plt.figure()
-    plt.plot(cost,'r')
-
-    # While D has not converged
-    while(not_converged):
-
-        D_before = np.array(D)
-
-        print("\n================================================")
-        print("\nIteration ",it)
-        # Find the sparse code h(x^(t)) for all x^(t) in=========
-        # the training set with ISTA
-        print("Find h with D fix\n")
-        h = ISTA(h,D,x,k)
-
-        # Update the dictonary====================================
-
-        # Computation A
-        A = h.dot(np.transpose(h))
-
-        # Computation B
-        B = x.dot(np.transpose(h))
-
-        # Run block-coordinate descent algorithm to update D
-        print("Find D with h fix\n")
-        D_not_converged = True
-        while(D_not_converged):
-            D_before2 = np.array(D)
-            for j in range(k):
-            # For each column D[:,j]
-                D[:,j] = (1/(A[j,j]+0.000001)) * (B[:,j] - (D.dot(A[:,j])) + (D[:,j].dot(A[j,j])))
-                # Normalize
-                D[:,j] = D[:,j] / (np.linalg.norm(D[:,j])+0.000001)
-            D_not_converged = Convergence(D_before2,D)
-        it = it +1
-
-        #Check convergence
-        print("\n")
-        not_converged = Convergence(D_before,D)
-
-        # Save cost evolution
-        cost = np.append(cost, compute_cost(x,D,h))
-        plt.plot(cost,'r')
-
-    # Print cost evolution
-    plt.show()
-    return [D,h]
-
-#===================================== MAIN ====================================
-
-# Load digits for the example
-digits = datasets.load_digits()
-
-# Use sparse coding to extract the dictionary and the sparse representation
-[D,h] = sparse_coding(np.transpose(digits.data[:10]))
-
-# Save the value of D and h
-fileD = open('D.mat','wb')
-fileH = open('h.mat','wb')
-np.save(fileD,D)
-np.save(fileH,h)
-k = 20
+def _as_2d_float_array(matrix: np.ndarray | Iterable[Iterable[float]], name: str) -> np.ndarray:
+    array = np.asarray(matrix, dtype=float)
+    if array.ndim != 2:
+        raise ValueError(f"{name} must be a 2D array")
+    if 0 in array.shape:
+        raise ValueError(f"{name} must not be empty")
+    return array
 
 
-# Plot the dictionary
-size_img = 8 # Because we have 8x8 images (digits)
-fig,table = plt.subplots(4,5)
-index_x = 0
-index_y = 0
+def convergence(matrix_before: np.ndarray, matrix_after: np.ndarray, tolerance: float = DEFAULT_TOLERANCE) -> bool:
+    """Return True while the update is still above the requested tolerance."""
+    before = np.asarray(matrix_before, dtype=float)
+    after = np.asarray(matrix_after, dtype=float)
+    return np.linalg.norm(before - after) > tolerance
 
-for i in range(k):
-    img = D[:,i]
-    img = np.reshape(img,(size_img,size_img))
-    table[index_x,index_y].imshow(img, cmap='gray')
-    index_y = index_y + 1
-    if index_y > 4:
-        index_x = index_x + 1
-        index_y = 0
-fig.show()
+
+# Backward-compatible alias.
+Convergence = convergence
+
+
+def shrink(values: np.ndarray | Iterable[float], coef: float) -> np.ndarray:
+    """Apply soft-thresholding without mutating the input array."""
+    if coef < 0:
+        raise ValueError("coef must be non-negative")
+    array = np.asarray(values, dtype=float)
+    return np.sign(array) * np.maximum(np.abs(array) - coef, 0.0)
+
+
+
+def ista(
+    initial_codes: np.ndarray | Iterable[Iterable[float]],
+    dictionary: np.ndarray,
+    samples: np.ndarray,
+    alpha: float = DEFAULT_ALPHA,
+    lambda_coef: float | None = DEFAULT_LAMBDA,
+    max_iter: int = DEFAULT_ISTA_MAX_ITER,
+    tolerance: float = DEFAULT_TOLERANCE,
+) -> np.ndarray:
+    """Infer sparse codes with iterative soft thresholding."""
+    codes = _as_2d_float_array(initial_codes, "initial_codes").copy()
+    dictionary = _as_2d_float_array(dictionary, "dictionary")
+    samples = _as_2d_float_array(samples, "samples")
+
+    if dictionary.shape[0] != samples.shape[0]:
+        raise ValueError("dictionary and samples must share the same feature dimension")
+    if dictionary.shape[1] != codes.shape[0] or samples.shape[1] != codes.shape[1]:
+        raise ValueError("codes shape must be (n_atoms, n_samples)")
+    if alpha <= 0:
+        raise ValueError("alpha must be positive")
+    if max_iter <= 0:
+        raise ValueError("max_iter must be positive")
+
+    lambda_value = DEFAULT_LAMBDA if lambda_coef is None else float(lambda_coef)
+    if lambda_value < 0:
+        raise ValueError("lambda_coef must be non-negative")
+
+    gram = dictionary.T @ dictionary
+    cross = dictionary.T @ samples
+
+    for _ in range(max_iter):
+        previous = codes.copy()
+        gradient = gram @ codes - cross
+        codes = shrink(codes - alpha * gradient, alpha * lambda_value)
+        if not convergence(previous, codes, tolerance=tolerance):
+            break
+    return codes
+
+
+# Backward-compatible alias.
+ISTA = ista
+
+
+
+def compute_cost(samples: np.ndarray, dictionary: np.ndarray, codes: np.ndarray, lambda_coef: float = DEFAULT_LAMBDA) -> float:
+    """Return the average sparse coding objective value."""
+    samples = _as_2d_float_array(samples, "samples")
+    dictionary = _as_2d_float_array(dictionary, "dictionary")
+    codes = _as_2d_float_array(codes, "codes")
+
+    if dictionary.shape[0] != samples.shape[0]:
+        raise ValueError("dictionary and samples must share the same feature dimension")
+    if dictionary.shape[1] != codes.shape[0] or samples.shape[1] != codes.shape[1]:
+        raise ValueError("codes shape must be (n_atoms, n_samples)")
+    if lambda_coef < 0:
+        raise ValueError("lambda_coef must be non-negative")
+
+    residual = samples - dictionary @ codes
+    n_samples = samples.shape[1]
+    return float((0.5 * np.linalg.norm(residual) ** 2 + lambda_coef * np.linalg.norm(codes, ord=1)) / n_samples)
+
+
+
+def _initial_dictionary(samples: np.ndarray, k: int, rng: np.random.Generator) -> np.ndarray:
+    n_features, n_samples = samples.shape
+    if k <= n_samples:
+        indices = rng.choice(n_samples, size=k, replace=False)
+        dictionary = samples[:, indices].copy()
+    else:
+        dictionary = rng.normal(size=(n_features, k))
+    norms = np.linalg.norm(dictionary, axis=0)
+    norms[norms == 0] = 1.0
+    return dictionary / norms
+
+
+
+def sparse_coding(
+    x: np.ndarray | Iterable[Iterable[float]],
+    k: int = 16,
+    alpha: float = DEFAULT_ALPHA,
+    lambda_coef: float = DEFAULT_LAMBDA,
+    max_iter: int = DEFAULT_MAX_ITER,
+    ista_max_iter: int = DEFAULT_ISTA_MAX_ITER,
+    tolerance: float = DEFAULT_TOLERANCE,
+    random_state: int | None = DEFAULT_RANDOM_STATE,
+    return_costs: bool = False,
+) -> Tuple[np.ndarray, np.ndarray] | Tuple[np.ndarray, np.ndarray, np.ndarray]:
+    """Learn a dictionary and sparse codes for samples arranged as (features, samples)."""
+    samples = _as_2d_float_array(x, "x")
+    n_features, n_samples = samples.shape
+
+    if k <= 0:
+        raise ValueError("k must be positive")
+    if k > n_features * 4:
+        raise ValueError("k is unexpectedly large for the provided feature space")
+    if alpha <= 0:
+        raise ValueError("alpha must be positive")
+    if lambda_coef < 0:
+        raise ValueError("lambda_coef must be non-negative")
+    if max_iter <= 0 or ista_max_iter <= 0:
+        raise ValueError("iteration counts must be positive")
+
+    rng = np.random.default_rng(random_state)
+    dictionary = _initial_dictionary(samples, k, rng)
+    codes = np.zeros((k, n_samples), dtype=float)
+    costs = []
+
+    for _ in range(max_iter):
+        previous_dictionary = dictionary.copy()
+        codes = ista(
+            codes,
+            dictionary,
+            samples,
+            alpha=alpha,
+            lambda_coef=lambda_coef,
+            max_iter=ista_max_iter,
+            tolerance=tolerance,
+        )
+
+        gram = codes @ codes.T
+        regularized_gram = gram + 1e-6 * np.eye(k)
+        dictionary = (samples @ codes.T) @ np.linalg.pinv(regularized_gram)
+
+        zero_columns = np.linalg.norm(dictionary, axis=0) == 0
+        if np.any(zero_columns):
+            dictionary[:, zero_columns] = _initial_dictionary(samples, int(np.sum(zero_columns)), rng)
+
+        norms = np.linalg.norm(dictionary, axis=0)
+        norms[norms == 0] = 1.0
+        dictionary = dictionary / norms
+
+        costs.append(compute_cost(samples, dictionary, codes, lambda_coef=lambda_coef))
+        if not convergence(previous_dictionary, dictionary, tolerance=tolerance):
+            break
+
+    if return_costs:
+        return dictionary, codes, np.asarray(costs, dtype=float)
+    return dictionary, codes
+
+
+
+def load_demo_digits(num_samples: int = 32) -> np.ndarray:
+    """Load a small digits subset for examples and tests."""
+    if num_samples <= 0:
+        raise ValueError("num_samples must be positive")
+    digits = datasets.load_digits()
+    num = min(num_samples, digits.data.shape[0])
+    return digits.data[:num].T.astype(float)
+
+
+
+def save_dictionary_plot(dictionary: np.ndarray, output_path: str | Path, image_shape: tuple[int, int] = (8, 8)) -> Path:
+    """Save the learned atoms as a grid image."""
+    dictionary = _as_2d_float_array(dictionary, "dictionary")
+    output = Path(output_path)
+    output.parent.mkdir(parents=True, exist_ok=True)
+
+    rows = max(1, math.ceil(math.sqrt(dictionary.shape[1])))
+    cols = max(1, math.ceil(dictionary.shape[1] / rows))
+
+    import matplotlib
+
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+
+    fig, axes = plt.subplots(rows, cols, figsize=(cols * 2, rows * 2))
+    axes_array = np.atleast_1d(axes).ravel()
+    for axis, atom in zip(axes_array, dictionary.T):
+        axis.imshow(atom.reshape(image_shape), cmap="gray")
+        axis.axis("off")
+    for axis in axes_array[dictionary.shape[1] :]:
+        axis.axis("off")
+    fig.tight_layout()
+    fig.savefig(output, bbox_inches="tight")
+    plt.close(fig)
+    return output
+
+
+
+def run_demo(
+    output_dir: str | Path,
+    num_samples: int = 32,
+    k: int = 16,
+    max_iter: int = 8,
+    random_state: int = DEFAULT_RANDOM_STATE,
+) -> dict:
+    """Run the main sparse-coding workflow and persist demo artifacts."""
+    output = Path(output_dir)
+    output.mkdir(parents=True, exist_ok=True)
+
+    samples = load_demo_digits(num_samples=num_samples)
+    dictionary, codes, costs = sparse_coding(
+        samples,
+        k=k,
+        max_iter=max_iter,
+        random_state=random_state,
+        return_costs=True,
+    )
+
+    dictionary_path = output / "dictionary.npy"
+    codes_path = output / "codes.npy"
+    costs_path = output / "costs.npy"
+    np.save(dictionary_path, dictionary)
+    np.save(codes_path, codes)
+    np.save(costs_path, costs)
+    plot_path = save_dictionary_plot(dictionary, output / "dictionary.png")
+
+    return {
+        "output_dir": str(output.resolve()),
+        "dictionary_path": str(dictionary_path.resolve()),
+        "codes_path": str(codes_path.resolve()),
+        "costs_path": str(costs_path.resolve()),
+        "plot_path": str(plot_path.resolve()),
+        "costs": costs,
+        "dictionary_shape": dictionary.shape,
+        "codes_shape": codes.shape,
+    }
+
+
+
+def build_argument_parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(description="Sparse coding demo on the scikit-learn digits dataset.")
+    parser.add_argument("--demo", action="store_true", help="Run the demo workflow and save artifacts.")
+    parser.add_argument("--output-dir", default="demo_output", help="Directory where demo artifacts will be written.")
+    parser.add_argument("--samples", type=int, default=32, help="Number of digit samples to use.")
+    parser.add_argument("--atoms", type=int, default=16, help="Number of dictionary atoms to learn.")
+    parser.add_argument("--max-iter", type=int, default=8, help="Maximum alternating-optimization iterations.")
+    parser.add_argument("--random-state", type=int, default=DEFAULT_RANDOM_STATE, help="Random seed for reproducibility.")
+    return parser
+
+
+
+def main() -> int:
+    parser = build_argument_parser()
+    args = parser.parse_args()
+
+    if not args.demo:
+        parser.print_help()
+        return 0
+
+    summary = run_demo(
+        output_dir=args.output_dir,
+        num_samples=args.samples,
+        k=args.atoms,
+        max_iter=args.max_iter,
+        random_state=args.random_state,
+    )
+    final_cost = float(summary["costs"][-1]) if len(summary["costs"]) else float("nan")
+    print(f"Demo artifacts written to: {summary['output_dir']}")
+    print(f"Dictionary shape: {summary['dictionary_shape']}")
+    print(f"Code shape: {summary['codes_shape']}")
+    print(f"Final cost: {final_cost:.6f}")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
