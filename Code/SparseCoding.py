@@ -15,6 +15,7 @@ DEFAULT_MAX_ITER = 15
 DEFAULT_ISTA_MAX_ITER = 75
 DEFAULT_TOLERANCE = 1e-4
 DEFAULT_RANDOM_STATE = 0
+MAX_ATOMS_PER_FEATURE = 4
 
 
 def _as_2d_float_array(matrix: np.ndarray | Iterable[Iterable[float]], name: str) -> np.ndarray:
@@ -139,7 +140,7 @@ def sparse_coding(
 
     if k <= 0:
         raise ValueError("k must be positive")
-    if k > n_features * 4:
+    if k > n_features * MAX_ATOMS_PER_FEATURE:
         raise ValueError("k is unexpectedly large for the provided feature space")
     if alpha <= 0:
         raise ValueError("alpha must be positive")
